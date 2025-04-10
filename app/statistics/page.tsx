@@ -15,5 +15,5 @@ export const metadata: Metadata = {
 export default async function Page() {
 	const statistics = await getStatistics();
 
-	return <Statistics statistics={statistics.toReversed()} />;
+	return <Statistics statistics={statistics.reverse()} />;
 }
