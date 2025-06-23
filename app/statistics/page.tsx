@@ -4,6 +4,8 @@ import { getStatistics } from '@/app/lib/data';
 import { openGraph, title } from '@/app/metadata';
 import Statistics from '@/app/ui/statistics';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
 	title: 'İstatistikler',
 	openGraph: {

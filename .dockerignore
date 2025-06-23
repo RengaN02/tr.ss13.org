@@ -1,6 +1,9 @@
-node_modules
-.git
+Dockerfile
+.dockerignore
 .gitignore
-*.md
+node_modules
+README.md
 .next
+.git
 .env*
+.editorconfig
