@@ -13,11 +13,15 @@ RUN bun run build --experimental-build-mode compile
 
 FROM base AS runner
 
+RUN apk add --no-cache curl
+
 COPY --from=builder /app/.next/standalone .
 COPY --from=builder /app/.next/static .next/static
 RUN mkdir .next/cache && chmod 777 .next/cache
 
 ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
+
 ENV PRODUCTION_URL=https://ss13.tr
 ENV NEXT_PUBLIC_API_URL=https://api.ss13.tr
 ENV API_KEY=hello
@@ -25,3 +29,5 @@ ENV API_KEY=hello
 USER bun
 EXPOSE 3000
 ENTRYPOINT [ "bun", "run", "server.js" ]
+
+HEALTHCHECK CMD curl -f http://localhost:3000/ || exit 1
