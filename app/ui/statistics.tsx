@@ -31,7 +31,7 @@ export default function Statistics({ statistics }: { statistics: OverviewData[] 
 const overviewCategories = {
 	players: 'Oyuncular',
 	duration: 'Round Süresi',
-	tier: 'Tehdit',
+	dynamic_tier: 'Tehdit',
 	deaths: 'Ölümler',
 	citations: 'Sabıkalar',
 };
