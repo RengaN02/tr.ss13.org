@@ -53,7 +53,7 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 			if (!(hours >= 9 && hours < 21)) return false;
 		}
 
-		return true;
+		return round.duration > 10;
 	}).sort((a, b) => a.round_id - b.round_id), [overview, nightHours]);
 
 	// workaround for line animation on category change otherwise it doesn't animate
@@ -128,7 +128,7 @@ function OverviewTooltip({ active, payload, label, category }: TooltipProps<numb
 						<p>{`Round ${label}`}</p>
 					</div>
 				);
-			case 'tier':
+			case 'dynamic_tier':
 				return (
 					<div className="[&>p]:text-center [&>p]:text-gray-100 [&>p:last-child]:text-gray-400 [&>p:last-child]:text-sm">
 						<p>{threat_tiers[payload[0].value]}</p>
