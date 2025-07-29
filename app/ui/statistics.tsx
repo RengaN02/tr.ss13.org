@@ -310,7 +310,7 @@ function Event({ item }: { item: Death | Citation }) {
 				<div className="w-full flex flex-col">
 					<div className="flex items-center justify-between gap-1">
 						<div className="inline">
-							<span className="mr-1 font-bold text-xl">{item.recipient}</span><span className="text-gray-400 text-sm">{item.fine ? "fined":"ticketed"} by <span className="text-gray-300">{item.sender}</span> {!!item.fine && (<>for <span className="text-gray-300">{item.fine}cr</span></>)}</span>
+							<span className="mr-1 font-bold text-xl">{item.recipient}</span><span className="text-gray-400 text-sm">{item.fine ? "fined" : "ticketed"} by <span className="text-gray-300">{item.sender}</span> {!!item.fine && (<>for <span className="text-gray-300">{item.fine}cr</span></>)}</span>
 						</div>
 						<span className="text-gray-400 text-sm">{item.crime}</span>
 					</div>
