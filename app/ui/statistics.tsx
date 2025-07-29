@@ -109,8 +109,9 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 	);
 }
 
+const THREAT_TIERS = ["Greenshift", "Düşük Kaos", "Düşük-Orta Kaos", "Orta-Yüksek Kaos", "Yüksek Kaos"]
+
 function OverviewTooltip({ active, payload, label, category }: TooltipProps<number, string> & { category: OverviewCategory; }) {
-	var threat_tiers = ["Greenshift", "Düşük Kaos", "Düşük-Orta Kaos", "Orta-Yüksek Kaos", "Yüksek Kaos"]
 	if (active && payload && payload.length) {
 		switch (category) {
 			case 'players':
@@ -131,7 +132,7 @@ function OverviewTooltip({ active, payload, label, category }: TooltipProps<numb
 			case 'dynamic_tier':
 				return (
 					<div className="[&>p]:text-center [&>p]:text-gray-100 [&>p:last-child]:text-gray-400 [&>p:last-child]:text-sm">
-						<p>{threat_tiers[payload[0].value]}</p>
+						<p>{THREAT_TIERS[payload[0].value]}</p>
 						<p>{`Round ${label}`}</p>
 					</div>
 				);
@@ -304,17 +305,16 @@ function Event({ item }: { item: Death | Citation }) {
 	}
 
 	if ('sender' in item) {
-		var is_citation = (item.fine != null && item.fine > 0)
 		return (
 			<li className="p-4 mb-4 bg-gray-600 bg-opacity-10 text-white rounded-lg">
 				<div className="w-full flex flex-col">
 					<div className="flex items-center justify-between gap-1">
 						<div className="inline">
-							<span className="mr-1 font-bold text-xl">{item.recipient}</span><span className="text-gray-400 text-sm">{is_citation ? "fined":"ticketed"} by <span className="text-gray-300">{item.sender}</span> {is_citation && (<>for <span className="text-gray-300">{item.fine}cr</span></>)}</span>
+							<span className="mr-1 font-bold text-xl">{item.recipient}</span><span className="text-gray-400 text-sm">{item.fine ? "fined":"ticketed"} by <span className="text-gray-300">{item.sender}</span> {!!item.fine && (<>for <span className="text-gray-300">{item.fine}cr</span></>)}</span>
 						</div>
 						<span className="text-gray-400 text-sm">{item.crime}</span>
 					</div>
-					{item.crime_desc != null && (
+					{!!item.crime_desc && (
 						<div className="w-full mt-2 flex">
 							<div className="flex flex-wrap text-sm text-gray-100">
 								{item.crime_desc}
