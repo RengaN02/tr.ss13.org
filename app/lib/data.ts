@@ -11,8 +11,6 @@ const bans_url = process.env.API_URL + '/v2/player/ban?permanent=true&since=2023
 
 const statistics_url = process.env.API_URL + '/v2/events/overview?limit=100';
 
-const censoredWords = process.env.BAN_REASON_CENSOR?.split(',').map(word => new RegExp(`${word}[^ ]*`, 'gmi')) ?? [];
-
 export async function getPlayer(ckey: string): Promise<Player> {
 	const playerPromise = fetch(player_url + ckey, { headers, next: { revalidate } });
 	const charactersPromise = fetch(characters_url + ckey, { headers, next: { revalidate } });
@@ -54,10 +52,6 @@ export async function getPlayer(ckey: string): Promise<Player> {
 
 	for (const ban of bans) {
 		delete ban.edits;
-
-		for (const word of censoredWords) {
-			ban.reason = ban.reason.replace(word, '∗∗∗∗');
-		}
 	}
 
 	return {
