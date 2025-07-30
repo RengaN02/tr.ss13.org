@@ -39,7 +39,7 @@ const overviewCategories = {
 type OverviewCategory = keyof typeof overviewCategories;
 
 function Overview({ overview }: { overview: OverviewData[] }) {
-	const [chartWidth, setChartWidth] = useState(800);
+	const [chartWidth, setChartWidth] = useState(0);
 	const chartRef = useRef<HTMLDivElement>(null);
 
 	const [selectedCategory, setSelectedCategory] = useState<OverviewCategory>('players');
@@ -85,23 +85,25 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 			<div className="max-md:w-full md:flex-1 rounded-xl overflow-x-hidden">
 				<div className="w-full flex justify-center">
 					<ResponsiveContainer ref={chartRef} width="100%" height={400}>
-						<LineChart width={chartWidth} height={400} data={animated} margin={{ top: 5, right: 50, left: 0, bottom: 5 }}>
-							<XAxis dataKey="round_id" padding={{ left: 5, right: 5 }} />
-							<YAxis padding={{ bottom: 5 }} allowDecimals={false} />
-							<Tooltip
-								cursor={{ opacity: 0.1 }}
-								contentStyle={{ background: 'transparent', border: 'none' }}
-								itemStyle={{ color: 'rgb(186 186 186)' }}
-								content={<OverviewTooltip category={selectedCategory} />}
-							/>
-							<Line dataKey={selectedCategory} dot={false} type="monotone" />
-							{selectedCategory === 'players' && (
-								<Line dataKey="readied_players" dot={false} type="monotone" stroke="#fcdf76" />
-							)}
-							{selectedCategory === 'citations' && (
-								<Line dataKey="crimes" dot={false} type="monotone" stroke="#fc7a76ff" />
-							)}
-						</LineChart>
+						{chartWidth ? (
+							<LineChart width={chartWidth} height={400} data={animated} margin={{ top: 5, right: 50, left: 0, bottom: 5 }}>
+								<XAxis dataKey="round_id" padding={{ left: 5, right: 5 }} />
+								<YAxis padding={{ bottom: 5 }} allowDecimals={false} />
+								<Tooltip
+									cursor={{ opacity: 0.1 }}
+									contentStyle={{ background: 'transparent', border: 'none' }}
+									itemStyle={{ color: 'rgb(186 186 186)' }}
+									content={<OverviewTooltip category={selectedCategory} />}
+								/>
+								<Line dataKey={selectedCategory} dot={false} type="monotone" />
+								{selectedCategory === 'players' && (
+									<Line dataKey="readied_players" dot={false} type="monotone" stroke="#fcdf76" />
+								)}
+								{selectedCategory === 'citations' && (
+									<Line dataKey="crimes" dot={false} type="monotone" stroke="#fc7a76ff" />
+								)}
+							</LineChart>
+						) : <></>}
 					</ResponsiveContainer>
 				</div>
 			</div>
@@ -109,7 +111,7 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 	);
 }
 
-const THREAT_TIERS = ["Greenshift", "Düşük Kaos", "Düşük-Orta Kaos", "Orta-Yüksek Kaos", "Yüksek Kaos"]
+const threatTiers = ["Greenshift", "Düşük Kaos", "Düşük-Orta Kaos", "Orta-Yüksek Kaos", "Yüksek Kaos"];
 
 function OverviewTooltip({ active, payload, label, category }: TooltipProps<number, string> & { category: OverviewCategory; }) {
 	if (active && payload && payload.length) {
@@ -132,7 +134,7 @@ function OverviewTooltip({ active, payload, label, category }: TooltipProps<numb
 			case 'dynamic_tier':
 				return (
 					<div className="[&>p]:text-center [&>p]:text-gray-100 [&>p:last-child]:text-gray-400 [&>p:last-child]:text-sm">
-						<p>{THREAT_TIERS[payload[0].value]}</p>
+						<p>{threatTiers[payload[0].value ?? 0]}</p>
 						<p>{`Round ${label}`}</p>
 					</div>
 				);
@@ -195,7 +197,7 @@ function Events() {
 		if (data) {
 			setShownData(data);
 		}
-	}, [data])
+	}, [data]);
 
 	const maxPage = useMemo(() => Math.ceil((shownData?.total_count ?? 1) / pageSize), [pageSize, shownData?.total_count]);
 
