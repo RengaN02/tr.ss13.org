@@ -31,9 +31,9 @@ export default function Statistics({ statistics }: { statistics: OverviewData[] 
 const overviewCategories = {
 	players: 'Oyuncular',
 	duration: 'Round Süresi',
-	threat_level: 'Tehdit',
+	dynamic_tier: 'Tehdit',
 	deaths: 'Ölümler',
-	citations: 'Para Cezaları',
+	citations: 'Sabıkalar',
 };
 
 type OverviewCategory = keyof typeof overviewCategories;
@@ -98,6 +98,9 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 							{selectedCategory === 'players' && (
 								<Line dataKey="readied_players" dot={false} type="monotone" stroke="#fcdf76" />
 							)}
+							{selectedCategory === 'citations' && (
+								<Line dataKey="crimes" dot={false} type="monotone" stroke="#fc7a76ff" />
+							)}
 						</LineChart>
 					</ResponsiveContainer>
 				</div>
@@ -105,6 +108,8 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 		</div>
 	);
 }
+
+const THREAT_TIERS = ["Greenshift", "Düşük Kaos", "Düşük-Orta Kaos", "Orta-Yüksek Kaos", "Yüksek Kaos"]
 
 function OverviewTooltip({ active, payload, label, category }: TooltipProps<number, string> & { category: OverviewCategory; }) {
 	if (active && payload && payload.length) {
@@ -124,11 +129,25 @@ function OverviewTooltip({ active, payload, label, category }: TooltipProps<numb
 						<p>{`Round ${label}`}</p>
 					</div>
 				);
+			case 'dynamic_tier':
+				return (
+					<div className="[&>p]:text-center [&>p]:text-gray-100 [&>p:last-child]:text-gray-400 [&>p:last-child]:text-sm">
+						<p>{THREAT_TIERS[payload[0].value]}</p>
+						<p>{`Round ${label}`}</p>
+					</div>
+				);
 			case 'deaths':
+				return (
+					<div className="[&>p]:text-center [&>p]:text-gray-100 [&>p:last-child]:text-gray-400 [&>p:last-child]:text-sm">
+						<p>{`${payload[0].value} ölüm`}</p>
+						<p>{`Round ${label}`}</p>
+					</div>
+				);
 			case 'citations':
 				return (
 					<div className="[&>p]:text-center [&>p]:text-gray-100 [&>p:last-child]:text-gray-400 [&>p:last-child]:text-sm">
-						<p>{payload[0].value} {category === 'deaths' ? 'ölüm' : 'ceza'}</p>
+						<p>{`${payload[0].value} para cezası`}</p>
+						<p>{`${payload[1].value} suç kaydı`}</p>
 						<p>{`Round ${label}`}</p>
 					</div>
 				);
@@ -147,6 +166,7 @@ function OverviewTooltip({ active, payload, label, category }: TooltipProps<numb
 
 const eventCategories = {
 	deaths: 'Ölümler',
+	crimes: "Suç Kayıtları",
 	citations: 'Para Cezaları',
 };
 
@@ -290,10 +310,17 @@ function Event({ item }: { item: Death | Citation }) {
 				<div className="w-full flex flex-col">
 					<div className="flex items-center justify-between gap-1">
 						<div className="inline">
-							<span className="mr-1 font-bold text-xl">{item.recipient}</span><span className="text-gray-400 text-sm">fined by <span className="text-gray-300">{item.sender}</span> for <span className="text-gray-300">{item.fine}cr</span></span>
+							<span className="mr-1 font-bold text-xl">{item.recipient}</span><span className="text-gray-400 text-sm">{item.fine ? "fined" : "ticketed"} by <span className="text-gray-300">{item.sender}</span> {!!item.fine && (<>for <span className="text-gray-300">{item.fine}cr</span></>)}</span>
 						</div>
 						<span className="text-gray-400 text-sm">{item.crime}</span>
 					</div>
+					{!!item.crime_desc && (
+						<div className="w-full mt-2 flex">
+							<div className="flex flex-wrap text-sm text-gray-100">
+								{item.crime_desc}
+							</div>
+						</div>
+					)}
 					<div className="w-full mt-2 flex">
 						<div className="flex flex-wrap">
 							<div className="border border-red-300 text-red-300 px-2 py-1 rounded-md text-xs">Round {item.round_id}</div>

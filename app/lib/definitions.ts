@@ -55,6 +55,7 @@ export type Citation = {
 	sender: string;
 	recipient: string;
 	crime: string;
+	crime_desc: string | null;
 	fine: number | null;
 	timestamp: string;
 	round_id: number | null;
