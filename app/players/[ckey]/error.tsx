@@ -11,7 +11,7 @@ type ErrorProps = {
 export default function Error({ error }: ErrorProps) {
 	useEffect(() => {
 		console.error(error);
-	}, [error])
+	}, [error]);
 
 	return (
 		<div className="flex-1 flex flex-col items-center gap-5">

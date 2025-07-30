@@ -5,16 +5,17 @@ import { getPlayer } from '@/app/lib/data';
 import { openGraph, title } from '@/app/metadata';
 import Player from '@/app/ui/player';
 
-export const revalidate = 3_600 // 1 hour
+export const revalidate = 3_600; // 1 hour
 
 type Props = {
-	params: {
+	params: Promise<{
 		ckey: string;
-	};
+	}>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-	const player = await getPlayer(params.ckey);
+	const { ckey } = await params;
+	const player = await getPlayer(ckey);
 
 	return {
 		title: player ? player.byond_key : '404',
@@ -26,7 +27,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
-	const player = await getPlayer(params.ckey);
+	const { ckey } = await params;
+	const player = await getPlayer(ckey);
 
 	if (!player) {
 		notFound();

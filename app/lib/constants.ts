@@ -43,4 +43,4 @@ export const roles = {
 		'Cybersun Space Syndicate', 'Cybersun Space Syndicate Captain', 'Syndicate Drone', 'Venus Human Trap', 'Zombie',
 		'Drone', 'Malfunctioning Bot', 'Free Golem', 'Servant Golem',
 	],
-}
+};

@@ -3,14 +3,14 @@
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Line, LineChart, ResponsiveContainer, Tooltip, TooltipProps, XAxis, YAxis } from 'recharts';
+import { Line, Tooltip, TooltipProps, XAxis, YAxis } from 'recharts';
 import useSWRImmutable from 'swr/immutable';
 import { useDebounce } from 'use-debounce';
 
-import useResize from '@/app/hooks/useResize';
 import { Citation, Death, OverviewData } from '@/app/lib/definitions';
 import fetcher from '@/app/lib/fetcher';
 import { minutesToHours } from '@/app/lib/time';
+import { LineChart } from '@/app/ui/chart';
 import { Navigation } from '@/app/ui/navigation';
 
 export default function Statistics({ statistics }: { statistics: OverviewData[] }) {
@@ -39,9 +39,6 @@ const overviewCategories = {
 type OverviewCategory = keyof typeof overviewCategories;
 
 function Overview({ overview }: { overview: OverviewData[] }) {
-	const [chartWidth, setChartWidth] = useState(0);
-	const chartRef = useRef<HTMLDivElement>(null);
-
 	const [selectedCategory, setSelectedCategory] = useState<OverviewCategory>('players');
 	const [nightHours, setNightHours] = useState(false);
 
@@ -61,11 +58,6 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const animated = useMemo(() => Array.from(filtered), [filtered, selectedCategory]);
 
-	useResize((entries) => {
-		const { width } = entries[0].contentRect;
-		setChartWidth(width);
-	}, chartRef);
-
 	return (
 		<div className="w-full flex flex-col md:flex-row">
 			<div className="max-md:w-full h-min flex flex-col">
@@ -84,34 +76,30 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 			</div>
 			<div className="max-md:w-full md:flex-1 rounded-xl overflow-x-hidden">
 				<div className="w-full flex justify-center">
-					<ResponsiveContainer ref={chartRef} width="100%" height={400}>
-						{chartWidth ? (
-							<LineChart width={chartWidth} height={400} data={animated} margin={{ top: 5, right: 50, left: 0, bottom: 5 }}>
-								<XAxis dataKey="round_id" padding={{ left: 5, right: 5 }} />
-								<YAxis padding={{ bottom: 5 }} allowDecimals={false} />
-								<Tooltip
-									cursor={{ opacity: 0.1 }}
-									contentStyle={{ background: 'transparent', border: 'none' }}
-									itemStyle={{ color: 'rgb(186 186 186)' }}
-									content={<OverviewTooltip category={selectedCategory} />}
-								/>
-								<Line dataKey={selectedCategory} dot={false} type="monotone" />
-								{selectedCategory === 'players' && (
-									<Line dataKey="readied_players" dot={false} type="monotone" stroke="#fcdf76" />
-								)}
-								{selectedCategory === 'citations' && (
-									<Line dataKey="crimes" dot={false} type="monotone" stroke="#fc7a76ff" />
-								)}
-							</LineChart>
-						) : <></>}
-					</ResponsiveContainer>
+					<LineChart data={animated} margin={{ top: 5, right: 50, left: 0, bottom: 5 }}>
+						<XAxis dataKey="round_id" padding={{ left: 5, right: 5 }} />
+						<YAxis padding={{ bottom: 5 }} allowDecimals={false} />
+						<Tooltip
+							cursor={{ opacity: 0.1 }}
+							contentStyle={{ background: 'transparent', border: 'none' }}
+							itemStyle={{ color: 'rgb(186 186 186)' }}
+							content={<OverviewTooltip category={selectedCategory} />}
+						/>
+						<Line dataKey={selectedCategory} dot={false} type="monotone" />
+						{selectedCategory === 'players' && (
+							<Line dataKey="readied_players" dot={false} type="monotone" stroke="#fcdf76" />
+						)}
+						{selectedCategory === 'citations' && (
+							<Line dataKey="crimes" dot={false} type="monotone" stroke="#fc7a76ff" />
+						)}
+					</LineChart>
 				</div>
 			</div>
 		</div>
 	);
 }
 
-const threatTiers = ["Greenshift", "Düşük Kaos", "Düşük-Orta Kaos", "Orta-Yüksek Kaos", "Yüksek Kaos"];
+const threatTiers = ['Greenshift', 'Düşük Kaos', 'Düşük-Orta Kaos', 'Orta-Yüksek Kaos', 'Yüksek Kaos'];
 
 function OverviewTooltip({ active, payload, label, category }: TooltipProps<number, string> & { category: OverviewCategory; }) {
 	if (active && payload && payload.length) {
@@ -168,7 +156,7 @@ function OverviewTooltip({ active, payload, label, category }: TooltipProps<numb
 
 const eventCategories = {
 	deaths: 'Ölümler',
-	crimes: "Suç Kayıtları",
+	crimes: 'Suç Kayıtları',
 	citations: 'Para Cezaları',
 };
 
@@ -312,7 +300,7 @@ function Event({ item }: { item: Death | Citation }) {
 				<div className="w-full flex flex-col">
 					<div className="flex items-center justify-between gap-1">
 						<div className="inline">
-							<span className="mr-1 font-bold text-xl">{item.recipient}</span><span className="text-gray-400 text-sm">{item.fine ? "fined" : "ticketed"} by <span className="text-gray-300">{item.sender}</span> {!!item.fine && (<>for <span className="text-gray-300">{item.fine}cr</span></>)}</span>
+							<span className="mr-1 font-bold text-xl">{item.recipient}</span><span className="text-gray-400 text-sm">{item.fine ? 'fined' : 'ticketed'} by <span className="text-gray-300">{item.sender}</span> {!!item.fine && (<>for <span className="text-gray-300">{item.fine}cr</span></>)}</span>
 						</div>
 						<span className="text-gray-400 text-sm">{item.crime}</span>
 					</div>

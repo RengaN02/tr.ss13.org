@@ -5,13 +5,13 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Bar, BarChart, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, Line, Tooltip, XAxis, YAxis } from 'recharts';
 
-import useResize from '@/app/hooks/useResize';
 import { roles } from '@/app/lib/constants';
 import type { Player } from '@/app/lib/definitions';
 import { relativeTime } from '@/app/lib/time';
 import Button from '@/app/ui/button';
+import { BarChart, LineChart} from '@/app/ui/chart';
 import { NumberInput } from '@/app/ui/input';
 import { Navigation } from '@/app/ui/navigation';
 
@@ -97,7 +97,6 @@ type RoletimeChartProps = {
 const tooltipFormatter = (value: number) => [value.toString().replace('.', ','), ''];
 
 function RoletimeChart({ roletime }: RoletimeChartProps) {
-	const [chartWidth, setChartWidth] = useState(800);
 	const [maxBars, setMaxBars] = useState(20);
 	const [inputInvalid, setInputInvalid] = useState(false);
 
@@ -111,8 +110,6 @@ function RoletimeChart({ roletime }: RoletimeChartProps) {
 		ghost: false,
 		antagonists: false,
 	});
-
-	const chartRef = useRef<HTMLDivElement>(null);
 
 	const filterJob = useCallback((
 		job: NonNullablePlayer['roletime'][number]['job'],
@@ -184,11 +181,6 @@ function RoletimeChart({ roletime }: RoletimeChartProps) {
 		}
 	}, [filteredRoletime]);
 
-	useResize((entries) => {
-		const { width } = entries[0].contentRect;
-		setChartWidth(width);
-	}, chartRef);
-
 	useEffect(() => {
 		if (inputRef.current) {
 			const value = Number(inputRef.current.value);
@@ -204,14 +196,12 @@ function RoletimeChart({ roletime }: RoletimeChartProps) {
 	return (
 		<>
 			{/* responsive container shit does not work as documented so i needed a workaround */}
-			<ResponsiveContainer ref={chartRef} width="100%" height={400} style={{ position: 'relative', left: -22 }}>
-				<BarChart width={chartWidth} height={400} data={visibleRoletime} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-					<XAxis dataKey="job" padding={{ left: 5, right: 5 }} />
-					<YAxis padding={{ bottom: 5 }} allowDecimals={false} />
-					<Tooltip cursor={{ opacity: 0.1 }} separator="" formatter={tooltipFormatter} contentStyle={{ background: 'transparent', border: 'none' }} itemStyle={{ color: 'rgb(100 116 139)' }} />
-					<Bar dataKey="hours" fill="#dc2626" unit=" saat" />
-				</BarChart>
-			</ResponsiveContainer>
+			<BarChart data={visibleRoletime} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} containerStyle={{ position: 'relative', left: -22 }}>
+				<XAxis dataKey="job" padding={{ left: 5, right: 5 }} />
+				<YAxis padding={{ bottom: 5 }} allowDecimals={false} />
+				<Tooltip cursor={{ opacity: 0.1 }} separator="" formatter={tooltipFormatter} contentStyle={{ background: 'transparent', border: 'none' }} itemStyle={{ color: 'rgb(100 116 139)' }} />
+				<Bar dataKey="hours" fill="#dc2626" unit=" saat" />
+			</BarChart>
 			<div className="flex flex-wrap items-center justify-center gap-4 [&>div]:flex [&>div]:items-center [&>div]:gap-2">
 				<div>
 					<span>Meslekler</span>
@@ -248,10 +238,6 @@ type ActivityChartProps = {
 };
 
 function ActivityChart({ activity }: ActivityChartProps) {
-	const [chartWidth, setChartWidth] = useState(800);
-
-	const chartRef = useRef<HTMLDivElement>(null);
-
 	const data = useMemo(() => {
 		const activityClone = [...activity];
 		const days: { date: string; rounds: number }[] = [];
@@ -265,20 +251,13 @@ function ActivityChart({ activity }: ActivityChartProps) {
 		return days;
 	}, [activity]);
 
-	useResize((entries) => {
-		const { width } = entries[0].contentRect;
-		setChartWidth(width);
-	}, chartRef);
-
 	return (
-		<ResponsiveContainer ref={chartRef} width="100%" height={400} style={{ position: 'relative', left: -22 }}>
-			<LineChart width={chartWidth} height={400} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-				<XAxis dataKey="date" tick={false} padding={{ left: 5, right: 5 }} />
-				<YAxis padding={{ bottom: 5 }} domain={[0, 24]} />
-				<Tooltip cursor={{ opacity: 0.1 }} separator="" formatter={tooltipFormatter} contentStyle={{ background: 'transparent', border: 'none' }} itemStyle={{ color: 'rgb(100 116 139)' }} />
-				<Line type="monotone" dataKey="rounds" unit=" round" dot={false} />
-			</LineChart>
-		</ResponsiveContainer>
+		<LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} containerStyle={{ position: 'relative', left: -22 }}>
+			<XAxis dataKey="date" tick={false} padding={{ left: 5, right: 5 }} />
+			<YAxis padding={{ bottom: 5 }} domain={[0, 24]} />
+			<Tooltip cursor={{ opacity: 0.1 }} separator="" formatter={tooltipFormatter} contentStyle={{ background: 'transparent', border: 'none' }} itemStyle={{ color: 'rgb(100 116 139)' }} />
+			<Line type="monotone" dataKey="rounds" unit=" round" dot={false} />
+		</LineChart>
 	);
 }
 
