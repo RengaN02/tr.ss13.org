@@ -4,7 +4,7 @@ import headers from '@/app/lib/headers';
 
 export const revalidate = 3_600; // 1 hour
 
-const url = process.env.NEXT_PUBLIC_API_URL + '/v2/events/deaths';
+const url = process.env.API_URL + '/v2/events/deaths';
 
 export async function GET(request: NextRequest) {
 	const fetchSize = request.nextUrl.searchParams.get('fetch_size');

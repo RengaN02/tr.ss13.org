@@ -3,13 +3,13 @@ import headers from '@/app/lib/headers';
 
 const revalidate = 3_600; // 1 hour
 
-const player_url = process.env.NEXT_PUBLIC_API_URL + '/v2/player?ckey=';
-const characters_url = process.env.NEXT_PUBLIC_API_URL + '/v2/player/characters?ckey=';
-const roletime_url = process.env.NEXT_PUBLIC_API_URL + '/v2/player/roletime?ckey=';
-const activity_url = process.env.NEXT_PUBLIC_API_URL + '/v2/player/activity?ckey=';
-const bans_url = process.env.NEXT_PUBLIC_API_URL + '/v2/player/ban?permanent=true&since=2023-08-23%2023:59:59&ckey=';
+const player_url = process.env.API_URL + '/v2/player?ckey=';
+const characters_url = process.env.API_URL + '/v2/player/characters?ckey=';
+const roletime_url = process.env.API_URL + '/v2/player/roletime?ckey=';
+const activity_url = process.env.API_URL + '/v2/player/activity?ckey=';
+const bans_url = process.env.API_URL + '/v2/player/ban?permanent=true&since=2023-08-23%2023:59:59&ckey=';
 
-const statistics_url = process.env.NEXT_PUBLIC_API_URL + '/v2/events/overview?limit=100';
+const statistics_url = process.env.API_URL + '/v2/events/overview?limit=100';
 
 const censoredWords = process.env.BAN_REASON_CENSOR?.split(',').map(word => new RegExp(`${word}[^ ]*`, 'gmi')) ?? [];
 

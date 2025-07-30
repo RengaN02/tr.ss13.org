@@ -4,7 +4,7 @@ import headers from '@/app/lib/headers';
 
 export const revalidate = 30; // 30 seconds
 
-const url = process.env.NEXT_PUBLIC_API_URL + '/v2/server';
+const url = process.env.API_URL + '/v2/server';
 
 export async function GET() {
 	try {
