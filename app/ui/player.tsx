@@ -195,7 +195,6 @@ function RoletimeChart({ roletime }: RoletimeChartProps) {
 
 	return (
 		<>
-			{/* responsive container shit does not work as documented so i needed a workaround */}
 			<BarChart data={visibleRoletime} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} containerStyle={{ position: 'relative', left: -22 }}>
 				<XAxis dataKey="job" padding={{ left: 5, right: 5 }} />
 				<YAxis padding={{ bottom: 5 }} allowDecimals={false} />
