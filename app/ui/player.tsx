@@ -164,11 +164,11 @@ function RoletimeChart({ roletime }: RoletimeChartProps) {
 
 		if (!value) {
 			event.target.value = '1';
-		} else if (value.startsWith('0') && Number(value) !== 0) {
-			event.target.value = String(Number(value));
+		} else if (value.startsWith('0') && +value !== 0) {
+			event.target.value = String(+value);
 		}
 
-		value = Number(event.target.value);
+		value = +event.target.value;
 
 		if (value >= 1 && value <= filteredRoletime.length) {
 			setMaxBars(value);
@@ -183,7 +183,7 @@ function RoletimeChart({ roletime }: RoletimeChartProps) {
 
 	useEffect(() => {
 		if (inputRef.current) {
-			const value = Number(inputRef.current.value);
+			const value = +inputRef.current.value;
 
 			if (value >= 1 && value <= filteredRoletime.length) {
 				setInputInvalid(false);
