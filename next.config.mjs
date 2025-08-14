@@ -4,6 +4,9 @@ const nextConfig = {
 		ppr: 'incremental',
 	},
 	output: 'standalone',
+	images: {
+		domains: ['cdn.ss13.tr'],
+	},
 };
 
 export default nextConfig;

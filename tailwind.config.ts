@@ -22,6 +22,20 @@ const config: Config = {
 			},
 		},
 	},
-	plugins: [],
+	plugins: [
+		function ({ addUtilities }: any) {
+      addUtilities({
+        '.scroll-touch': {
+          '-webkit-overflow-scrolling': 'touch',
+        },
+				'.no-scrollbar': {
+          'scrollbar-width': 'none',
+          '-ms-overflow-style': 'none',
+        },
+        '.no-scrollbar::-webkit-scrollbar': {
+          display: 'none',
+        },
+      });
+    },],
 };
 export default config;

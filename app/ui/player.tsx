@@ -487,9 +487,8 @@ function Achievements({ achievements }: AchievementsProps) {
 			<div
 				ref={containerRef}
 				onScroll={onScroll}
-				className="overflow-x-auto no-scrollbar flex gap-2 py-2 px-1 touch-pan-x w-full"
+				className={`overflow-x-auto no-scrollbar flex gap-2 py-2 px-1 touch-pan-x w-full scroll-touch`}
 				style={{
-					WebkitOverflowScrolling: "touch",
 					maxWidth: `${DESIRED_CLIENT_WIDTH}px`,
 				}}
 			>
@@ -502,7 +501,7 @@ function Achievements({ achievements }: AchievementsProps) {
 						return (
 							<div
 								key={ach.achievement_key}
-								className="flex-shrink-0 w-[76px] h-[76px] rounded-md flex items-center justify-center border border-transparent hover:border-slate-300 hover:border-opacity-20"
+								className="flex-shrink-0 w-[76px] h-[76px] rounded-md flex items-center justify-center border border-transparent hover:border-slate-300 hover:border-opacity-20 select-none"
 								title={`${ach.achievement_name}\n${ach.achievement_description}`}
 								role="img"
 								aria-label={ach.achievement_key}
@@ -529,16 +528,6 @@ function Achievements({ achievements }: AchievementsProps) {
 			>
 				<span className="text-xl">›</span>
 			</button>
-
-			<style jsx>{`
-				.no-scrollbar::-webkit-scrollbar {
-					display: none;
-				}
-				.no-scrollbar {
-					-ms-overflow-style: none;
-					scrollbar-width: none;
-				}
-			`}</style>
 		</div>
 	);
 }
