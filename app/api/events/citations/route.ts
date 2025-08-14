@@ -4,7 +4,7 @@ import headers from '@/app/lib/headers';
 
 export const revalidate = 3_600; // 1 hour
 
-const url = process.env.NEXT_PUBLIC_API_URL + '/v2/events/citations';
+const url = process.env.API_URL + '/v2/events/citations';
 
 export async function GET(request: NextRequest) {
 	const fetchSize = request.nextUrl.searchParams.get('fetch_size');
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 		return new NextResponse('Missing fetch_size param', { status: 400 });
 	}
 
-	if (Number(fetchSize) > 40) {
+	if (+fetchSize > 40) {
 		return new NextResponse('fetch_size param is too large', { status: 400 });
 	}
 

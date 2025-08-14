@@ -10,6 +10,23 @@ rules:
   '@typescript-eslint/no-explicit-any': off
   'simple-import-sort/imports': error
   'simple-import-sort/exports': error
+  curly:
+    - error
+    - multi-line
+  eqeqeq:
+    - error
+    - always
+  linebreak-style:
+    - error
+    - unix
   no-empty:
     - error
     - allowEmptyCatch: true
+  no-unused-vars: off
+  quotes:
+    - warn
+    - single
+    - avoidEscape: true
+  semi:
+    - error
+    - always
