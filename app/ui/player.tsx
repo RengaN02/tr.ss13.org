@@ -472,27 +472,25 @@ function Achievements({ achievements }: AchievementsProps) {
 			>
 				<div ref={innerRef} className="flex space-x-2 items-center">
 					{achievements.map((ach) => {
-						const iconName =
-							achievements_icons?.[ach.achievement_key] ??
-							ach.achievement_key;
-						const src = `https://cdn.ss13.tr/tg/achievements/${iconName}.png`;
-						return (
-							<div
-								key={ach.achievement_key}
-								className="flex-shrink-0 w-[76px] h-[76px] rounded-md flex items-center justify-center border border-transparent hover:border-slate-300 hover:border-opacity-20 select-none"
-								title={`${ach.achievement_name}\n${ach.achievement_description}`}
-								role="img"
-								aria-label={ach.achievement_key}
-							>
-								<Image
-									src={src}
-									alt={ach.achievement_name || 'Başarım'}
-									width={ITEM_SIZE}
-									height={ITEM_SIZE}
-									draggable={false}
-									className="rounded-sm object-cover"
-								/>
-							</div>
+						const iconName = achievements_icons?.[ach.achievement_key] ?? ach.achievement_key;
+							const src = `${process.env.CDN_URL}/tg/achievements/${iconName}.png`;
+							return (
+								<div
+									key={ach.achievement_key}
+									className="flex-shrink-0 w-[76px] h-[76px] rounded-md flex items-center justify-center border border-transparent hover:border-slate-300 hover:border-opacity-20 select-none"
+									title={`${ach.achievement_name}\n${ach.achievement_description}`}
+									role="img"
+									aria-label={ach.achievement_key}
+								>
+									<Image
+										src={src}
+										alt={ach.achievement_name || 'Başarım'}
+										width={ITEM_SIZE}
+										height={ITEM_SIZE}
+										draggable={false}
+										className="rounded-sm object-cover"
+									/>
+								</div>
 						);
 					})}
 				</div>
