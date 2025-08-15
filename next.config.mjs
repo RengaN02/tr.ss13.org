@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-const { hostname } = new URL(process.env.CDN_URL);
 
 const nextConfig = {
 	experimental: {
@@ -7,7 +6,7 @@ const nextConfig = {
 	},
 	output: 'standalone',
 	images: {
-		domains: [hostname],
+		domains: ['cdn.ss13.tr'],
 	},
 };
 
