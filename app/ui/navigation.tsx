@@ -38,7 +38,7 @@ export function Navigation({ onPrevious, onNext, onChange, min, max, value, id }
 	}, [onNext, scrollIntoView]);
 
 	const handleOnChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-		if (onChange && onChange(Number(event.target.value)) !== false) {
+		if (onChange && onChange(+event.target.value) !== false) {
 			scrollIntoView();
 		}
 	}, [onChange, scrollIntoView]);

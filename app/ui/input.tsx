@@ -1,17 +1,15 @@
 'use client';
 
-import { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-type NumberInputProps = {} & React.InputHTMLAttributes<HTMLInputElement>;
+type NumberInputProps = {
+	ref?: React.RefObject<HTMLInputElement | null>;
+} & React.InputHTMLAttributes<HTMLInputElement>;
 
-export const NumberInput = forwardRef((props: NumberInputProps, ref: ForwardedRef<HTMLInputElement>) => {
+export function NumberInput(props: NumberInputProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
-
-	const min = props.min;
-	const max = props.max;
-	const onChange = props.onChange;
+	const { min, max, onChange, ref } = props;
 
 	useEffect(() => {
 		const preventScroll = (event: Event) => {
@@ -20,12 +18,9 @@ export const NumberInput = forwardRef((props: NumberInputProps, ref: ForwardedRe
 				event.stopPropagation();
 
 				const deltaY = (event as WheelEvent).deltaY > 0 ? -1 : 1;
-				const value = Number(inputRef.current.value) + deltaY;
+				const value = +inputRef.current.value + deltaY;
 
-				if (
-					(min !== undefined && value < Number(min)) ||
-					(max !== undefined && value > Number(max))
-				) {
+				if (min !== undefined && value < +min || max !== undefined && value > +max) {
 					return;
 				}
 
@@ -41,12 +36,18 @@ export const NumberInput = forwardRef((props: NumberInputProps, ref: ForwardedRe
 			}
 		};
 
-		document.body.firstChild!.addEventListener('wheel', preventScroll, { passive: false });
+		document.body.addEventListener('wheel', preventScroll, { passive: false });
 
 		return () => {
-			document.body.firstChild!.removeEventListener('wheel', preventScroll);
+			document.body.removeEventListener('wheel', preventScroll);
 		};
 	}, [min, max, onChange]);
+
+	useEffect(() => {
+		if (ref) {
+			ref.current = inputRef.current;
+		}
+	}, [ref]);
 
 	return (
 		<input
@@ -56,6 +57,4 @@ export const NumberInput = forwardRef((props: NumberInputProps, ref: ForwardedRe
 			type="number"
 		/>
 	);
-});
-
-NumberInput.displayName = 'NumberInput';
+}

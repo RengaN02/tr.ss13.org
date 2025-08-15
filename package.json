@@ -1,5 +1,5 @@
 {
-	"name": "turkb.us",
+	"name": "ss13.tr",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
@@ -15,24 +15,24 @@
 		"@fortawesome/free-solid-svg-icons": "^6.6.0",
 		"@fortawesome/react-fontawesome": "^0.2.2",
 		"dayjs": "^1.11.13",
-		"next": "15.0.0-rc.0",
-		"react": "19.0.0-rc-f994737d14-20240522",
-		"react-dom": "19.0.0-rc-f994737d14-20240522",
+		"next": "15.4.2-canary.20",
+		"react": "^19",
+		"react-dom": "^19",
 		"recharts": "2.13.0-alpha.4",
 		"swr": "^2.2.5",
 		"use-debounce": "^10.0.4"
 	},
 	"devDependencies": {
 		"@types/node": "^20",
-		"@types/react": "^18",
-		"@types/react-dom": "^18",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
 		"@typescript-eslint/eslint-plugin": "^8.2.0",
 		"@typescript-eslint/parser": "^8.2.0",
-		"eslint": "8",
-		"eslint-config-next": "15.0.0-rc.0",
+		"eslint": "^8",
+		"eslint-config-next": "15.4.2-canary.20",
 		"eslint-plugin-simple-import-sort": "^12.1.1",
 		"postcss": "^8",
-		"tailwindcss": "^3.4.1",
-		"typescript": "^5"
+		"tailwindcss": "^3",
+		"typescript": "^5.6.0"
 	}
 }

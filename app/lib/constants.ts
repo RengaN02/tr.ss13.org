@@ -43,7 +43,7 @@ export const roles = {
 		'Cybersun Space Syndicate', 'Cybersun Space Syndicate Captain', 'Syndicate Drone', 'Venus Human Trap', 'Zombie',
 		'Drone', 'Malfunctioning Bot', 'Free Golem', 'Servant Golem',
 	],
-}
+};
 
 export const achievementsIcons = {
   "Tendril Exterminator": "tendril",
@@ -139,4 +139,4 @@ export const achievementsIcons = {
   "Sharkdragon": "dragon_plus_fish",
   "Legendary Miner": "mining",
   "Legendary Fisher": "fishing_hat"
-}
+};
