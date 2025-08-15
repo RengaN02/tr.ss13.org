@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Bar, Line, Tooltip, XAxis, YAxis } from 'recharts';
 
-import useResize from '@/app/hooks/useResize';
 import { achievementsIcons, roles } from '@/app/lib/constants';
 import type { Player } from '@/app/lib/definitions';
 import { relativeTime } from '@/app/lib/time';
@@ -303,23 +302,23 @@ function Achievements({ achievements }: AchievementsProps) {
 		const checkDevice = () => {
 			const width = window.innerWidth;
 			if (width <= 360) {
-				setVisibleItems(VISIBLE_MOBILE_SMALL)
+				setVisibleItems(VISIBLE_MOBILE_SMALL);
 			} else if (width <= 480) {
-				setVisibleItems(VISIBLE_MOBILE)
+				setVisibleItems(VISIBLE_MOBILE);
 			} else if (width <= 768) {
-				setVisibleItems(VISIBLE_TABLET_SMALL)
+				setVisibleItems(VISIBLE_TABLET_SMALL);
 			} else if (width <= 1200) {
-				setVisibleItems(VISIBLE_TABLET)
+				setVisibleItems(VISIBLE_TABLET);
 			} else if (width <= 2160) {
-				setVisibleItems(VISIBLE_DEFAULT)
+				setVisibleItems(VISIBLE_DEFAULT);
 			} else {
-				setVisibleItems(VISIBLE_LARGE_DESKTOP)
+				setVisibleItems(VISIBLE_LARGE_DESKTOP);
 			}
 		};
 
 		checkDevice();
-		window.addEventListener("resize", checkDevice);
-		return () => window.removeEventListener("resize", checkDevice);
+		window.addEventListener('resize', checkDevice);
+		return () => window.removeEventListener('resize', checkDevice);
 	}, []);
 
 	const updateButtons = () => {
@@ -333,11 +332,11 @@ function Achievements({ achievements }: AchievementsProps) {
 	useEffect(() => {
 		updateButtons();
 		const onResize = () => updateButtons();
-		window.addEventListener("resize", onResize);
-		return () => window.removeEventListener("resize", onResize);
+		window.addEventListener('resize', onResize);
+		return () => window.removeEventListener('resize', onResize);
 	}, [achievements.length]);
 
-	const scrollByItems = (direction: "left" | "right") => {
+	const scrollByItems = (direction: 'left' | 'right') => {
 		const el = containerRef.current;
 		const inner = innerRef.current;
 		if (!el || !inner) return;
@@ -352,7 +351,7 @@ function Achievements({ achievements }: AchievementsProps) {
 		const step = visibleCount >= 3 ? 2 : 1;
 
 		let targetIndex =
-			direction === "left" ? currentIndex - step : currentIndex + step;
+			direction === 'left' ? currentIndex - step : currentIndex + step;
 
 		const maxIndex = Math.max(0, achievements.length - visibleCount);
 		if (targetIndex < 0) targetIndex = 0;
@@ -363,7 +362,7 @@ function Achievements({ achievements }: AchievementsProps) {
 		const finalScroll = Math.max(0, Math.min(targetScroll, maxScroll));
 
 		if (finalScroll !== el.scrollLeft) {
-			el.scrollTo({ left: finalScroll, behavior: "smooth" });
+			el.scrollTo({ left: finalScroll, behavior: 'smooth' });
 		}
 	};
 
@@ -382,7 +381,7 @@ function Achievements({ achievements }: AchievementsProps) {
 		let rafId: number | null = null;
 
 		const onPointerDown = (e: PointerEvent) => {
-			if (e.pointerType === "touch") return;
+			if (e.pointerType === 'touch') return;
 			isDown = true;
 			el.setPointerCapture?.(e.pointerId);
 			startX = e.clientX;
@@ -390,7 +389,7 @@ function Achievements({ achievements }: AchievementsProps) {
 			startScroll = el.scrollLeft;
 			lastT = performance.now();
 			velocity = 0;
-			el.classList.add("cursor-grabbing");
+			el.classList.add('cursor-grabbing');
 			if (rafId) {
 				cancelAnimationFrame(rafId);
 				rafId = null;
@@ -430,7 +429,7 @@ function Achievements({ achievements }: AchievementsProps) {
 			if (!isDown) return;
 			isDown = false;
 			el.releasePointerCapture?.(e.pointerId);
-			el.classList.remove("cursor-grabbing");
+			el.classList.remove('cursor-grabbing');
 			if (Math.abs(velocity) > 0.001) {
 				startInertia();
 			} else {
@@ -438,14 +437,14 @@ function Achievements({ achievements }: AchievementsProps) {
 			}
 		};
 
-		el.addEventListener("pointerdown", onPointerDown);
-		window.addEventListener("pointermove", onPointerMove);
-		window.addEventListener("pointerup", onPointerUp);
+		el.addEventListener('pointerdown', onPointerDown);
+		window.addEventListener('pointermove', onPointerMove);
+		window.addEventListener('pointerup', onPointerUp);
 
 		return () => {
-			el.removeEventListener("pointerdown", onPointerDown);
-			window.removeEventListener("pointermove", onPointerMove);
-			window.removeEventListener("pointerup", onPointerUp);
+			el.removeEventListener('pointerdown', onPointerDown);
+			window.removeEventListener('pointermove', onPointerMove);
+			window.removeEventListener('pointerup', onPointerUp);
 			if (rafId) cancelAnimationFrame(rafId);
 		};
 	}, []);
@@ -456,9 +455,9 @@ function Achievements({ achievements }: AchievementsProps) {
 		<div className="w-full flex items-center gap-3 justify-center">
 			<button
 				aria-label="Önceki"
-				onClick={() => scrollByItems("left")}
+				onClick={() => scrollByItems('left')}
 				disabled={!canScrollLeft}
-				className={`p-2 rounded-full focus:outline-none bg-slate-100 bg-opacity-0 hover:bg-opacity-20 disabled:opacity-40`}
+				className={'p-2 rounded-full focus:outline-none bg-slate-100 bg-opacity-0 hover:bg-opacity-20 disabled:opacity-40'}
 			>
 				<span className="text-xl">‹</span>
 			</button>
@@ -466,7 +465,7 @@ function Achievements({ achievements }: AchievementsProps) {
 			<div
 				ref={containerRef}
 				onScroll={onScroll}
-				className={`overflow-x-auto no-scrollbar flex gap-2 py-2 px-1 touch-pan-x w-full scroll-touch`}
+				className={'overflow-x-auto no-scrollbar flex gap-2 py-2 px-1 touch-pan-x w-full scroll-touch'}
 				style={{
 					maxWidth: `${DESIRED_CLIENT_WIDTH}px`,
 				}}
@@ -487,7 +486,7 @@ function Achievements({ achievements }: AchievementsProps) {
 							>
 								<Image
 									src={src}
-									alt={ach.achievement_name || "Başarım"}
+									alt={ach.achievement_name || 'Başarım'}
 									width={ITEM_SIZE}
 									height={ITEM_SIZE}
 									draggable={false}
@@ -501,9 +500,9 @@ function Achievements({ achievements }: AchievementsProps) {
 
 			<button
 				aria-label="Sonraki"
-				onClick={() => scrollByItems("right")}
+				onClick={() => scrollByItems('right')}
 				disabled={!canScrollRight}
-				className={`p-2 rounded-full focus:outline-none bg-slate-100 bg-opacity-0 hover:bg-opacity-20 disabled:opacity-40`}
+				className={'p-2 rounded-full focus:outline-none bg-slate-100 bg-opacity-0 hover:bg-opacity-20 disabled:opacity-40'}
 			>
 				<span className="text-xl">›</span>
 			</button>
