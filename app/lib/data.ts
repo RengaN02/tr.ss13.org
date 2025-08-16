@@ -7,6 +7,7 @@ const player_url = process.env.API_URL + '/v2/player?ckey=';
 const characters_url = process.env.API_URL + '/v2/player/characters?ckey=';
 const roletime_url = process.env.API_URL + '/v2/player/roletime?ckey=';
 const activity_url = process.env.API_URL + '/v2/player/activity?ckey=';
+const achievements_url = process.env.API_URL + '/v2/player/achievements?achievement_type=achievement&ckey=';
 const bans_url = process.env.API_URL + '/v2/player/ban?permanent=true&since=2023-08-23%2023:59:59&ckey=';
 
 const statistics_url = process.env.API_URL + '/v2/events/overview?limit=100';
@@ -16,22 +17,23 @@ export async function getPlayer(ckey: string): Promise<Player> {
 	const charactersPromise = fetch(characters_url + ckey, { headers, next: { revalidate } });
 	const roletimePromise = fetch(roletime_url + ckey, { headers, next: { revalidate } });
 	const activityPromise = fetch(activity_url + ckey, { headers, next: { revalidate } });
+	const achievementsPromise = fetch(achievements_url + ckey, { headers, next: { revalidate } });
 	const bansPromise = fetch(bans_url + ckey, { headers, next: { revalidate } });
 
 	const [
 		playerResponse, charactersResponse,
 		roletimeResponse, activityResponse,
-		bansResponse
+		achievementsResponse, bansResponse
 	] = await Promise.all([
 		playerPromise, charactersPromise,
 		roletimePromise, activityPromise,
-		bansPromise
+		achievementsPromise, bansPromise
 	]);
 
 	if (!(
 		playerResponse.ok && charactersResponse.ok &&
 		roletimeResponse.ok && activityResponse.ok &&
-		bansResponse.ok
+		achievementsResponse.ok && bansResponse.ok
 	)) {
 		if (playerResponse.status === 404) {
 			return null;
@@ -43,11 +45,11 @@ export async function getPlayer(ckey: string): Promise<Player> {
 	const [
 		player, characters,
 		roletime, activity,
-		bans
+		achievements, bans
 	] = await Promise.all([
 		playerResponse.json(), charactersResponse.json(),
 		roletimeResponse.json(), activityResponse.json(),
-		bansResponse.json()
+		achievementsResponse.json(), bansResponse.json()
 	]);
 
 	for (const ban of bans) {
@@ -59,6 +61,7 @@ export async function getPlayer(ckey: string): Promise<Player> {
 		characters,
 		roletime,
 		activity,
+		achievements,
 		bans,
 	};
 }

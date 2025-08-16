@@ -24,6 +24,15 @@ export type Player = {
 	characters: [string, number][];
 	roletime: { job: string; minutes: number }[];
 	activity: [string, number][];
+	achievements: {
+		achievement_key: string;
+		achievement_version: number;
+		achievement_type: string | null;
+		achievement_name: string | null;
+		achievement_description: string | null;
+		value: number | null;
+		timestamp: string;
+	}[];
 	bans: {
 		bantime: string;
 		round_id: number | null;
