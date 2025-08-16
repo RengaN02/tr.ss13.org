@@ -45,7 +45,7 @@ export const roles = {
 	],
 };
 
-export const achievementsIcons = {
+export const achievementsIcons: Record<string, string> = {
   'Tendril Exterminator': 'tendril',
   'Boss Killer': 'firstboss',
   'Blood-drunk Miner Killer': 'miner',
@@ -138,5 +138,5 @@ export const achievementsIcons = {
   'Cigarettes': 'cigarettes',
   'Sharkdragon': 'dragon_plus_fish',
   'Legendary Miner': 'mining',
-  'Legendary Fisher': 'fishing_hat'
+  'Legendary Fisher': 'fishing_hat',
 };
