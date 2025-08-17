@@ -479,7 +479,7 @@ function Achievements({ achievements }: AchievementsProps) {
 	return (
 		<div className="w-full py-5 flex items-center gap-3 justify-center">
 			<button
-				className={'p-2 rounded-full focus:outline-none bg-slate-100 bg-opacity-0 hover:bg-opacity-20 disabled:opacity-40 transition-colors'}
+				className="p-2 rounded-full focus:outline-none bg-slate-100 bg-opacity-0 hover:bg-opacity-20 disabled:opacity-40 transition-colors"
 				onClick={() => scrollByItems('left')}
 				disabled={!canScrollLeft}
 				title="Önceki"
@@ -488,7 +488,7 @@ function Achievements({ achievements }: AchievementsProps) {
 			</button>
 			<div
 				className="overflow-x-auto scrollbar-hidden flex gap-2 py-2 px-1 touch-pan-x cursor-grab w-full scrollling-touch"
-				style={{ maxWidth: `${DESIRED_CLIENT_WIDTH}px` }}
+				style={{ maxWidth: `${DESIRED_CLIENT_WIDTH}px`, ...(!canScrollLeft && !canScrollRight) && { justifyContent: 'center' } }}
 				ref={containerRef}
 				onScroll={() => updateButtons()}
 			>
