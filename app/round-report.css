@@ -1,0 +1,110 @@
+:root {
+	--bg: #0b0f14;
+  --card: #111821;
+  --card-border: #1e2a36;
+  --card-accent: #2a3b52;
+  --muted: #9fb0c3;
+  --success: #3ddc97;
+  --danger: #ff6b6b;
+  --warning: #f5a524;
+  --info: #5ab0ff;
+  --shadow: 0 6px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.02);
+}
+
+.panel {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--card-border);
+  border-radius: 0.25rem;
+  padding: 16px 18px;
+  margin: 14px auto;
+	backdrop-filter: blur(3px);
+	-webkit-backdrop-filter: blur(3px);
+}
+
+.panel.stationborder {
+  border-color: var(--card-accent);
+}
+.panel.redborder {
+  border-color: rgba(182, 54, 54, 0.55);
+}
+
+.header {
+	display: block;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: .3px;
+  color: #ffffff;
+
+
+}
+.redtext { color: var(--danger); font-weight: 700; }
+.greentext { color: var(--success); font-weight: 700; }
+.bluetext { color: var(--info); font-weight: 700; }
+
+.panel ul { padding-left: 18px; margin: 6px 0 0; }
+.panel li { margin: 4px 0; color: var(--muted); }
+.panel .service { color: var(--info); font-weight: 600; }
+.panel .header + br { line-height: 8px; }
+.panel .tooltip_container { white-space: nowrap; }
+
+.panel .tooltip_container:hover {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.14);
+}
+
+.tooltip_container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px;
+  margin: 0 2px;
+  border-radius: 0.25rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  cursor: help;
+}
+
+.tooltip_hover {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 8px);
+  transform: translateX(-50%) translateY(4px);
+  min-width: 260px;
+	width: max-content;
+  max-width: 380px;
+  padding: 12px 14px;
+  border-radius: 0.25rem;
+  background: #0d141c;
+  color: #fff;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+  z-index: 10;
+}
+
+.tooltip_container:hover .tooltip_hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.icon {
+	width: 48px;
+  height: 48px;
+  vertical-align: -6px;
+  image-rendering: -webkit-optimize-contrast;
+  border-radius: 0.25rem;
+  outline: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.02);
+  padding: 3px;
+	image-rendering: pixelated;
+}

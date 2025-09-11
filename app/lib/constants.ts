@@ -140,3 +140,74 @@ export const achievementsIcons: Record<string, string> = {
   'Legendary Miner': 'mining',
   'Legendary Fisher': 'fishing_hat',
 };
+
+export const departmentColors: Record<string, string> = {
+  Command: '#fcdf03',
+  Security: '#dd3535',
+  Engineering: '#f37746',
+  Medical: '#57b8f0',
+  Science: '#c68cfa',
+  Cargo: '#b88646',
+  Service: '#6ca729',
+  Silicon: '#56d3ad',
+};
+
+export const jobDepartments: Record<string, string> = {
+	'Captain': 'Command',
+	'Head of Personnel': 'Command',
+	'Head of Security': 'Command',
+	'Research Director': 'Command',
+	'Chief Engineer': 'Command',
+	'Chief Medical Officer': 'Command',
+	'Veteran Security Advisor': 'Command',
+	'Bridge Assistant': 'Command',
+
+	'AI': 'Silicon',
+	'Cyborg': 'Silicon',
+	'Personal AI': 'Silicon',
+	'Big Brother': 'Silicon',
+
+	'Warden': 'Security',
+	'Detective': 'Security',
+	'Security Officer': 'Security',
+	'Brig Physician': 'Security',
+	'Security Officer (Medical)': 'Security',
+	'Security Officer (Engineering)': 'Security',
+	'Security Officer (Science)': 'Security',
+	'Security Officer (Cargo)': 'Security',
+
+	'Station Engineer': 'Engineering',
+	'Atmospheric Technician': 'Engineering',
+	'Worker': 'Engineering',
+
+	'Coroner': 'Medical',
+	'Medical Doctor': 'Medical',
+	'Paramedic': 'Medical',
+	'Chemist': 'Medical',
+
+	'Scientist': 'Science',
+	'Roboticist': 'Science',
+	'Geneticist': 'Science',
+
+	'Quartermaster': 'Cargo',
+	'Cargo Technician': 'Cargo',
+	'Cargo Gorilla': 'Cargo',
+	'Shaft Miner': 'Cargo',
+	'Bitrunner': 'Cargo',
+
+	'Bartender': 'Service',
+	'Botanist': 'Service',
+	'Cook': 'Service',
+	'Chef': 'Service',
+	'Janitor': 'Service',
+	'Clown': 'Service',
+	'Mime': 'Service',
+	'Curator': 'Service',
+	'Lawyer': 'Service',
+	'Chaplain': 'Service',
+	'Psychologist': 'Service',
+};
+
+export const threatTiers = ['Greenshift', 'Düşük Kaos', 'Düşük-Orta Kaos', 'Orta-Yüksek Kaos', 'Yüksek Kaos'];
+
+export const publicLogFiles = ['admin.log.gz', 'attack.log.gz', 'game.log.gz', 'round_end_data.html.gz', 'round_end_data.json.gz', 'shuttle.log.gz'];

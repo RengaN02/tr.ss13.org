@@ -2,11 +2,13 @@
 
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Line, Tooltip, TooltipProps, XAxis, YAxis } from 'recharts';
 import useSWRImmutable from 'swr/immutable';
 import { useDebounce } from 'use-debounce';
 
+import { threatTiers } from '@/app/lib/constants';
 import { Citation, Death, OverviewData } from '@/app/lib/definitions';
 import fetcher from '@/app/lib/fetcher';
 import { minutesToHours } from '@/app/lib/time';
@@ -61,7 +63,7 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 	return (
 		<div className="w-full flex flex-col md:flex-row">
 			<div className="max-md:w-full h-min flex flex-col">
-				<div className="max-md:w-full h-min p-4 bg-gray-700 bg-opacity-10 rounded-xl">
+				<div className="max-md:w-full h-min p-4 bg-gray-700 bg-opacity-10 rounded-[.25rem]">
 					<h2 className="mb-4 text-white text-lg font-bold text-center md:text-base">Kategoriler</h2>
 					<ul className="space-y-2 [&>li]:px-4 [&>li]:py-2">
 						{Object.entries(overviewCategories).map(([category, name]) => (
@@ -98,8 +100,6 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 		</div>
 	);
 }
-
-const threatTiers = ['Greenshift', 'Düşük Kaos', 'Düşük-Orta Kaos', 'Orta-Yüksek Kaos', 'Yüksek Kaos'];
 
 function OverviewTooltip({ active, payload, label, category }: TooltipProps<number, string> & { category: OverviewCategory; }) {
 	if (active && payload && payload.length) {
@@ -226,7 +226,7 @@ function Events() {
 
 	return (
 		<div className="w-full flex flex-col md:flex-row md:space-x-4">
-			<div className="max-md:w-full h-min p-4 mb-4 bg-gray-700 bg-opacity-10 rounded-xl">
+			<div className="max-md:w-full h-min p-4 mb-4 bg-gray-700 bg-opacity-10 rounded-[.25rem]">
 				<h2 className="mb-4 text-white text-lg font-bold text-center md:text-base">Kategoriler</h2>
 				<ul className="space-y-2 [&>li]:px-4 [&>li]:py-2">
 					{Object.entries(eventCategories).map(([category, name]) => (
@@ -269,7 +269,7 @@ function Events() {
 function Event({ item }: { item: Death | Citation }) {
 	if ('name' in item) {
 		return (
-			<li className="p-4 mb-4 bg-gray-600 bg-opacity-10 text-white rounded-lg">
+			<li className="p-4 mb-4 bg-gray-600 bg-opacity-10 text-white rounded-[.25rem]">
 				<div className="w-full flex flex-col">
 					<div className="flex items-center justify-between gap-1">
 						<div className="inline">
@@ -279,8 +279,8 @@ function Event({ item }: { item: Death | Citation }) {
 					</div>
 					<div className="w-full mt-2 flex justify-between">
 						<div className="flex flex-wrap gap-2">
-							<div className="border border-red-300 text-red-300 px-2 py-1 rounded-md text-xs">Round {item.round_id}</div>
-							{item.suicide && <div className="border border-purple-300 text-purple-300 px-2 py-1 rounded-md text-xs">İntihar</div>}
+							<Link href={`/rounds/${item.round_id}`} className="border border-red-400 text-red-400 hover:bg-red-400 hover:text-black px-2 py-1 rounded-[.25rem] text-xs">Round {item.round_id}</Link>
+							{item.suicide && <div className="border border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black px-2 py-1 rounded-[.25rem] text-xs cursor-pointer">İntihar</div>}
 						</div>
 						<div className="flex items-center gap-2 [&>span]:text-sm">
 							<span title="Brute" className="text-red-500">{item.bruteloss}</span>
@@ -296,7 +296,7 @@ function Event({ item }: { item: Death | Citation }) {
 
 	if ('sender' in item) {
 		return (
-			<li className="p-4 mb-4 bg-gray-600 bg-opacity-10 text-white rounded-lg">
+			<li className="p-4 mb-4 bg-gray-600 bg-opacity-10 text-white rounded-[.25rem]">
 				<div className="w-full flex flex-col">
 					<div className="flex items-center justify-between gap-1">
 						<div className="inline">
@@ -313,7 +313,7 @@ function Event({ item }: { item: Death | Citation }) {
 					)}
 					<div className="w-full mt-2 flex">
 						<div className="flex flex-wrap">
-							<div className="border border-red-300 text-red-300 px-2 py-1 rounded-md text-xs">Round {item.round_id}</div>
+							<Link href={`/rounds/${item.round_id}`} className="border border-red-400 text-red-400 hover:bg-red-400 hover:text-black px-2 py-1 rounded-[.25rem] text-xs">Round {item.round_id}</Link>
 						</div>
 					</div>
 				</div>

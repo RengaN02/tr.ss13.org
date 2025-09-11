@@ -52,3 +52,8 @@ export function minutesToHours(minutes: number): string {
 
 	return `${hours ? `${hours} saat ` : ''}${remainder} dakika`;
 }
+
+// YYYY-MM-DD HH:mm:ss TO YYYY/MM/DD
+export function formatDate(date: string) {
+	return date.split(' ')[0].replaceAll('-', '/');
+}

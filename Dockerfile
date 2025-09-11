@@ -24,6 +24,7 @@ ENV HOSTNAME=0.0.0.0
 
 ENV PRODUCTION_URL=https://ss13.tr
 ENV CDN_URL=https://cdn.ss13.tr
+ENV SERVER_GITHUB=https://github.com/psychonaut-station/PsychonautStation
 ENV API_URL=https://api.ss13.tr
 ENV API_KEY=hello
 
