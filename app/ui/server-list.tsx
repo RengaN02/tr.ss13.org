@@ -16,8 +16,8 @@ export default function ServerList() {
 			{isLoading && !servers && !error && (
 				<ServerSkeleton />
 			)}
-			{servers?.map((status) => (
-				<Server key={status.connection_info} status={status} />
+			{servers?.map((status, index) => (
+				<Server key={index} status={status} />
 			))}
 			{error && (
 				<span className="text-red-500">An error has occurred: {error.message}</span>
