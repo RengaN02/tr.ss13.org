@@ -102,16 +102,16 @@ export async function getRound(round_id: number): Promise<RoundData | null> {
 	const formatted_date = formatDate(round.initialize_datetime);
 	const formatted_path = `${formatted_date}/round-${round_id}`;
 	try {
-	const photo_metadata_request = await fetch(picture_logs_url + `${formatted_path}/metadata.json`, { headers, next: { revalidate } });
-	if (photo_metadata_request.ok) {
-		const photo_metadata = await photo_metadata_request.json();
-		Object.keys(photo_metadata).forEach((item) => {
-			photo_metadata[item].src = photo_metadata[item].logpath.replace('data/picture_logs/', '');
-			delete photo_metadata[item].logpath;
-			delete photo_metadata[item].tag;
-			round_pictures.push(photo_metadata[item]);
-		});
-	}
+		const photo_metadata_request = await fetch(picture_logs_url + `${formatted_path}/metadata.json`, { headers, next: { revalidate } });
+		if (photo_metadata_request.ok) {
+			const photo_metadata = await photo_metadata_request.json();
+			Object.keys(photo_metadata).forEach((item) => {
+				photo_metadata[item].src = photo_metadata[item].logpath.replace('data/picture_logs/', '');
+				delete photo_metadata[item].logpath;
+				delete photo_metadata[item].tag;
+				round_pictures.push(photo_metadata[item]);
+			});
+		}
 	} catch {}
 	for (const item of publicLogFiles) {
 		const file_url = logs_folder_url + `${formatted_path}/${item}`;
