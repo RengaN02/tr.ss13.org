@@ -31,8 +31,6 @@ export default function Round({ round, round_report, github_url }: RoundProps) {
 	}
 	if (!round.station_name) round.station_name = 'Space Station 13';
 
-	console.log(round);
-
 	const round_end_report = round.log_files.find(obj => obj.name.startsWith('round_end_data') && obj.src !== undefined);
 	return (
 		<div className={`w-full max-w-full flex-1 flex flex-col grid ${round_end_report && 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
