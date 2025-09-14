@@ -31,9 +31,8 @@ export default function Round({ round, round_report, github_url }: RoundProps) {
 	}
 	if (!round.station_name) round.station_name = 'Space Station 13';
 
-	const round_end_report = round.log_files.find(obj => obj.name.startsWith('round_end_data') && obj.src !== undefined);
 	return (
-		<div className={`w-full max-w-full flex-1 flex flex-col grid ${round_end_report && 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
+		<div className='w-full max-w-full flex-1 flex flex-col grid'>
 			<div className='col-span-2 flex flex-col gap-6'>
 				<div className="max-w-full flex flex-col items-center gap-3">
 					<span className="max-w-full text-center text-5xl font-bold overflow-hidden text-ellipsis">Round {round.round_id}</span>
@@ -63,7 +62,7 @@ export default function Round({ round, round_report, github_url }: RoundProps) {
 						<span><span className="font-bold">Shuttle:</span> {round.shuttle_name}</span>
 					)}
 					{round.nukedisk && (round.nukedisk.x || round.nukedisk.holder) && (
-						<span><span className="font-bold">Nuke Disk Konumu:</span>
+						<span><span className="font-bold">Nuke Disk Konumu: </span>
 						{round.nukedisk.holder}
 						{(round.nukedisk.x && !round.nukedisk.holder) && ` X: ${round.nukedisk.x} Y: ${round.nukedisk.y} Z: ${round.nukedisk.z}`}</span>
 					)}
@@ -88,12 +87,12 @@ export default function Round({ round, round_report, github_url }: RoundProps) {
 						<Pictures pictures={round.round_pictures}/>
 					)}
 				</div>
+				{round_report && (
+					<div className="w-full flex flex-col items-center gap-3">
+						<RoundEndReport data={round_report}></RoundEndReport>
+					</div>
+				)}
 			</div>
-			{round_report && (
-				<div className="justify-center items-center">
-					<RoundEndReport data={round_report}></RoundEndReport>
-				</div>
-			)}
 		</div>
 	);
 }
@@ -110,7 +109,7 @@ function PlayersChart({ antagonists, roundend_stats }: PlayersProps) {
 		<div className='max-w-full w-5/6 flex flex-col items-center gap-5'>
 		<div className="max-w-full flex flex-col items-center gap-3">
 			<span className="max-w-full text-center text-2xl font-bold overflow-hidden text-ellipsis">Oyuncular</span>
-			<div className="flex flex-wrap gap-2">
+			<div className="flex flex-wrap gap-2 justify-center">
 			{sortedLiving.map((item, index) => {
 				let department = '';
 				const antagonist = antagonists.filter(user => (user.key === item.ckey && user.name === item.name));
@@ -160,7 +159,7 @@ function PlayersChart({ antagonists, roundend_stats }: PlayersProps) {
 		</div>
 		<div className="max-w-full flex flex-col items-center gap-3">
 			<span className="max-w-full text-center text-2xl font-bold overflow-hidden text-ellipsis">İzleyiciler</span>
-			<div className="flex flex-wrap gap-2">
+			<div className="flex flex-wrap gap-2 justify-center">
 			{roundend_stats.ghosts.map((item, index) => (
 				<div
 					key={index}
@@ -215,7 +214,7 @@ function Logs({ log_files }: LogsProps) {
 			<span className="max-w-full text-center text-2xl font-bold overflow-hidden text-ellipsis">Loglar</span>
 			<div className="flex flex-wrap gap-2">
 				{log_files.map((item, index) => (
-					<Link key={index} href={item.src ?? ''} className={`border ${item.src ? 'border-green-500 text-green-500 hover:bg-green-500' : 'border-gray-400 text-gray-400 hover:bg-gray-400 cursor-not-allowed'} hover:text-black px-2 py-1 rounded-[.25rem] text-sm`}>{item.name}</Link>
+					<Link key={index} href={item.src ?? ''} prefetch={false} className={`border ${item.src ? 'border-green-500 text-green-500 hover:bg-green-500' : 'border-gray-400 text-gray-400 hover:bg-gray-400 cursor-not-allowed'} hover:text-black px-2 py-1 rounded-[.25rem] text-sm`}>{item.name}</Link>
 				))}
 			</div>
 		</div>
@@ -279,10 +278,8 @@ function Pictures({ pictures }: PicturesProps) {
 function RoundEndReport({ data }: { data: string }) {
 	const innerHtml = data?.replaceAll('&nbsp;&nbsp;', '&nbsp;');
 	return (
-		<div>
-			<div className='panel'>
-				<span className="header block text-center border-none">Round End Report:</span>
-			</div>
+		<div className="w-full flex flex-col items-center">
+			<span className="max-w-full text-center text-2xl font-bold overflow-hidden text-ellipsis">Round Raporu</span>
 			{innerHtml && (
 				<div dangerouslySetInnerHTML={{ __html: innerHtml }}/>
 			)}

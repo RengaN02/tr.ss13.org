@@ -15,7 +15,7 @@ const bans_url = process.env.API_URL + '/v2/player/ban?permanent=true&since=2023
 const statistics_url = process.env.API_URL + '/v2/events/overview?limit=100';
 
 const round_url = process.env.API_URL + '/v2/round?round_id=';
-const picture_logs_url = process.env.CDN_URL + '/picture_logs/';
+const picture_logs_url = process.env.CDN_URL + '/picture-logs/';
 const logs_folder_url = process.env.PRODUCTION_URL + '/logs/';
 
 export async function getPlayer(ckey: string): Promise<Player> {
@@ -117,7 +117,7 @@ export async function getRound(round_id: number): Promise<RoundData | null> {
 		const file_url = logs_folder_url + `${formatted_path}/${item}`;
 		const log_file: any = {name: item};
 		try {
-			const logfile_request = await fetch(file_url, { headers, next: { revalidate } });
+			const logfile_request = await fetch(file_url, { method: 'OPTIONS', headers, next: { revalidate } });
 			if (logfile_request.ok) {
 				log_file.src = file_url;
 			}
