@@ -5,6 +5,6 @@ export function achievementsImageLoader(props: ImageLoaderProps) {
 }
 
 export function pictureLogLoader(props: ImageLoaderProps) {
-  return `${process.env.CDN_URL ?? 'https://cdn.ss13.tr'}/picture_logs/${props.src}`;
+  return `${process.env.CDN_URL ?? 'https://cdn.ss13.tr'}/picture-logs/${props.src}`;
 }
 /* TEST İCİN picture_logs yapıldı. picture-logs yapılcak */
