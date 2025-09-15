@@ -32,7 +32,7 @@ export default function Round({ round, round_report, github_url }: RoundProps) {
 	if (!round.station_name) round.station_name = 'Space Station 13';
 
 	return (
-		<div className='w-full max-w-full flex-1 flex flex-col grid'>
+		<div className='w-full max-w-full flex-1 flex flex-col'>
 			<div className='col-span-2 flex flex-col gap-6'>
 				<div className="max-w-full flex flex-col items-center gap-3">
 					<span className="max-w-full text-center text-5xl font-bold overflow-hidden text-ellipsis">Round {round.round_id}</span>
