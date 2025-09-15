@@ -1,4 +1,4 @@
-import { RoundStats } from '@/app/lib/definitions';
+import type { RawRoundStats, RoundStats } from '@/app/lib/definitions';
 
 export function gameState(gamestate: number) {
 	switch (gamestate) {
@@ -26,45 +26,37 @@ export function roundDuration(seconds: number) {
 	return `${pad(hours)}:${pad(minutes % 60)}:${pad(seconds % 60)}`;
 }
 
-function toArray<T>(input: T): T | any[] {
-    if (typeof input === 'object' && input !== null) {
-        return Object.values(input);
-    }
-    return input;
-}
-
-export async function parseRoundStats(stats: any): Promise<RoundStats | null> {
-	if(!stats) return null;
+export async function parseRoundStats(stats: RawRoundStats): Promise<RoundStats> {
 	const escapees = stats.escapees;
 	const abandoned = stats.abandoned;
 
 	const humans = [
-		...toArray(escapees.humans),
-		...toArray(abandoned.humans),
+		...Object.values(escapees.humans),
+		...Object.values(abandoned.humans),
 	];
 	const silicons = [
-		...toArray(escapees.silicons),
-		...toArray(abandoned.silicons),
+		...Object.values(escapees.silicons),
+		...Object.values(abandoned.silicons),
 	];
 	const others = [
-		...toArray(escapees.others),
-		...toArray(abandoned.others),
+		...Object.values(escapees.others),
+		...Object.values(abandoned.others),
 	];
 	const ghosts = [
-		...toArray(stats.ghosts)
+		...Object.values(stats.ghosts)
 	];
 
-	const living = {
-		humans,
-		silicons,
-		others
-	};
+	const living = { humans, silicons, others };
 
-	const station_integrity = stats['additional data']['station integrity'];
+	const stationIntegrity = stats['additional data']['station integrity'];
 
 	return {
 		living,
 		ghosts,
-		station_integrity
+		station_integrity: stationIntegrity
 	};
+}
+
+export function capitalize(str: string) {
+	return str.replace(/\b\w/g, char => char.toUpperCase());
 }

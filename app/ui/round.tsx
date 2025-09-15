@@ -1,191 +1,166 @@
 'use client';
 
-import '../round-report.css';
+import '@/app/styles/round-report.css';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Fragment } from 'react';
 import { Line, Tooltip as ChartTooltip, TooltipProps, XAxis, YAxis } from 'recharts';
 
 import { departmentColors, jobDepartments, threatTiers } from '@/app/lib/constants';
+import { capitalize } from '@/app/lib/conversion';
 import { RoundData } from '@/app/lib/definitions';
-import { pictureLogLoader } from '@/app/lib/image-loader';
+import { pictureImageLoader } from '@/app/lib/image-loader';
 import { relativeTime } from '@/app/lib/time';
+import Carousel from '@/app/ui/carousel';
 import { LineChart } from '@/app/ui/chart';
-import ScrollableObjects from '@/app/ui/scrollable-objects';
 import Tooltip from '@/app/ui/tooltip';
 
-
-type NonNullableRoundData = NonNullable<RoundData>;
-
 type RoundProps = {
-	round: NonNullableRoundData;
-	round_report: string | null;
-	github_url: string | undefined;
+	round: RoundData;
+	roundReport: string | null;
+	github: string | undefined;
 };
 
-export default function Round({ round, round_report, github_url }: RoundProps) {
-	let round_duration = '0 dakika 0 saniye';
+export default function Round({ round, roundReport, github }: RoundProps) {
+	let roundDuration = '0 dakika 0 saniye';
+
 	if (round.start_datetime && (round.end_datetime || round.shutdown_datetime)) {
-		round_duration = relativeTime(round.start_datetime, round.end_datetime || round.shutdown_datetime || undefined);
+		roundDuration = relativeTime(round.start_datetime, round.end_datetime || round.shutdown_datetime || undefined);
 	}
-	if (!round.station_name) round.station_name = 'Space Station 13';
+
+	const stationName = round.station_name || 'Space Station 13';
 
 	return (
-		<div className='w-full max-w-full flex-1 flex flex-col'>
-			<div className='col-span-2 flex flex-col gap-6'>
-				<div className="max-w-full flex flex-col items-center gap-3">
-					<span className="max-w-full text-center text-5xl font-bold overflow-hidden text-ellipsis">Round {round.round_id}</span>
-					<span><span className="font-bold">Harita:</span> {round.map_name}</span>
-					<span><span className="font-bold">Süre:</span> {round_duration}</span>
-					<span><span className="font-bold">İstasyon:</span> {round.station_name}</span>
-					{round.commit_hash && github_url && (
-						<span><span className="font-bold">Version:</span> <Link className="text-blue-500 hover:text-blue-400" href={`${github_url}/commit/${round.commit_hash}`}>Commit</Link></span>
-					)}
-					<span><span className="font-bold">Açılma Tarihi:</span> {round.initialize_datetime}</span>
-					{round.start_datetime && (
-						<span><span className="font-bold">Başlama Tarihi:</span> {round.start_datetime}</span>
-					)}
-					{round.end_datetime && (
-						<span><span className="font-bold">Bitiş Tarihi:</span> {round.end_datetime}</span>
-					)}
-					{round.shutdown_datetime && (
-						<span><span className="font-bold">Kapanma Tarihi:</span> {round.shutdown_datetime}</span>
-					)}
-					{round.roundend_stats && (
-						<span><span className="font-bold">İstasyon Bütünlüğü:</span> %{round.roundend_stats.station_integrity}</span>
-					)}
-					{round.dynamic_tier && (
-						<span><span className="font-bold">Tehlike Seviyesi:</span> {threatTiers[round.dynamic_tier]}</span>
-					)}
-					{round.shuttle_name && (
-						<span><span className="font-bold">Shuttle:</span> {round.shuttle_name}</span>
-					)}
-					{round.nukedisk && (round.nukedisk.x || round.nukedisk.holder) && (
-						<span><span className="font-bold">Nuke Disk Konumu: </span>
-						{round.nukedisk.holder}
-						{(round.nukedisk.x && !round.nukedisk.holder) && ` X: ${round.nukedisk.x} Y: ${round.nukedisk.y} Z: ${round.nukedisk.z}`}</span>
-					)}
-				</div>
-				<div className="max-w-full flex flex-col items-center gap-3">
-					{round.roundend_stats && (
-						<PlayersChart antagonists={round.antagonists} roundend_stats={round.roundend_stats}/>
-					)}
-				</div>
-				<div className="max-w-full flex flex-col items-center gap-3">
-					{round.population && (
-						<PopulationChart population={round.population}/>
-					)}
-				</div>
-				<div className="max-w-full flex flex-col items-center gap-3">
-					{round.log_files && (
-						<Logs log_files={round.log_files}/>
-					)}
-				</div>
-				<div className="w-full flex flex-col items-center gap-3">
-					{round.round_pictures && !!round.round_pictures.length && (
-						<Pictures pictures={round.round_pictures}/>
-					)}
-				</div>
-				{round_report && (
-					<div className="w-full flex flex-col items-center gap-3">
-						<RoundEndReport data={round_report}></RoundEndReport>
-					</div>
+		<div className="w-full max-w-full flex-1 flex flex-col items-center gap-5">
+			{/* Round */}
+			<div className="flex flex-col items-center gap-3 [&>span>span:first-child]:font-bold text-center">
+				<span className="text-5xl font-bold">Round {round.round_id}</span>
+				<span><span>Harita:</span> {round.map_name}</span>
+				<span><span>Süre:</span> {roundDuration}</span>
+				<span><span>İstasyon:</span> {stationName}</span>
+				<span><span>Açılış Tarihi:</span> <span title={`${relativeTime(round.initialize_datetime)} önce`}>{round.initialize_datetime}</span></span>
+				{round.start_datetime && (
+					<span><span>Başlangıç Tarihi:</span> <span title={`${relativeTime(round.start_datetime)} önce`}>{round.start_datetime}</span></span>
+				)}
+				{round.end_datetime && (
+					<span><span>Bitiş Tarihi:</span> <span title={`${relativeTime(round.end_datetime)} önce`}>{round.end_datetime}</span></span>
+				)}
+				{round.shutdown_datetime && (
+					<span><span>Kapanış Tarihi:</span> <span title={`${relativeTime(round.shutdown_datetime)} önce`}>{round.shutdown_datetime}</span></span>
+				)}
+				{round.roundend_stats && (
+					<span><span>İstasyon Bütünlüğü:</span> %{round.roundend_stats.station_integrity}</span>
+				)}
+				{round.dynamic_tier && (
+					<span><span>Tehlike Seviyesi:</span> {threatTiers[round.dynamic_tier]}</span>
+				)}
+				{round.shuttle_name && (
+					<span><span>Shuttle:</span> {capitalize(round.shuttle_name)}</span>
+				)}
+				{round.nukedisk && (round.nukedisk.x || round.nukedisk.holder) && (
+					<span><span>Nuke Disk Konumu:</span>
+					{' '}
+					{round.nukedisk.holder}
+					{(round.nukedisk.x && !round.nukedisk.holder) && ` X: ${round.nukedisk.x} Y: ${round.nukedisk.y} Z: ${round.nukedisk.z}`}</span>
+				)}
+				{round.commit_hash && github && (
+					<span><span>Sürüm:</span> <Link className="text-blue-500 hover:text-blue-400" prefetch={false} href={`${github}/commit/${round.commit_hash}`}>{round.commit_hash.slice(0, 7)}</Link></span>
 				)}
 			</div>
+			{/* Players */}
+			{round.roundend_stats && (
+				<Players antagonists={round.antagonists} stats={round.roundend_stats}/>
+			)}
+			{/* Population */}
+			{round.population && (
+				<Population population={round.population}/>
+			)}
+			{/* Logs */}
+			{round.log_files.length > 0 && (
+				<Logs logs={round.log_files}/>
+			)}
+			{/* Pictures */}
+			{round.round_pictures.length > 0 && (
+				<Pictures pictures={round.round_pictures}/>
+			)}
+			{/* Round Report */}
+			{roundReport && (
+				<RoundEndReport data={roundReport}></RoundEndReport>
+			)}
 		</div>
 	);
 }
 
 type PlayersProps = {
-	antagonists: NonNullableRoundData['antagonists'];
-	roundend_stats: NonNullableRoundData['roundend_stats'];
+	antagonists: RoundData['antagonists'];
+	stats: NonNullable<RoundData['roundend_stats']>;
 };
 
-function PlayersChart({ antagonists, roundend_stats }: PlayersProps) {
-	if(!roundend_stats) return <></>;
-	const sortedLiving = [...sortByJob(roundend_stats.living.humans), ...roundend_stats.living.silicons, ...roundend_stats.living.others];
+function Players({ antagonists, stats }: PlayersProps) {
+	const sortedLiving = [...sortByJob(stats.living.humans), ...stats.living.silicons, ...stats.living.others];
+
 	return (
-		<div className='max-w-full w-5/6 flex flex-col items-center gap-5'>
-		<div className="max-w-full flex flex-col items-center gap-3">
-			<span className="max-w-full text-center text-2xl font-bold overflow-hidden text-ellipsis">Oyuncular</span>
-			<div className="flex flex-wrap gap-2 justify-center">
-			{sortedLiving.map((item, index) => {
-				let department = '';
-				const antagonist = antagonists.filter(user => (user.key === item.ckey && user.name === item.name));
+		<div className="flex flex-col items-center gap-5">
+			{/* Players */}
+			<div className="flex flex-col items-center gap-3">
+				<span className="text-center text-3xl font-bold">Oyuncular</span>
+				<div className="flex flex-wrap justify-center gap-2 px-2 py-6 sm:px-14 md:px-18 xl:px-60">
+					{sortedLiving.map(({ name, ckey, job, species, module }, index) => {
+						const department = job ? jobDepartments[job] : '';
+						const colorStyle = { '--color': departmentColors[department] ?? '#c5c5c5' } as React.CSSProperties;
 
-				if(item.job) {
-					department = jobDepartments[item.job];
-				}
+						const antagonist = antagonists.filter(player => player.key === ckey && player.name === name);
 
-				return (
-					<Tooltip
-						key={index}
-						content={
-							<div className="flex flex-col gap-2 items-center">
-								<b className="text-lg flex flex-col items-center">{item.name} {item.ckey && (<div className='text-sm text-gray-400'>{item.ckey}</div>)}</b>
-								{item.job && (<div>Görevi: {item.job}</div>)}
-								{item.species && (<div>Irk: {item.species}</div>)}
-								{item.module && (<div>Model: {item.module}</div>)}
-								{antagonist.length > 0 && (
-									<Fragment>
-										<b className="text-[17px]">Özel Roller:</b>
-										{antagonist.map((antagItem, antagIndex) => (
-											<div
-												key={antagIndex}
-												className="w-full rounded-md flex flex-col items-center"
-											>
-												<div className="font-semibold text-white">{antagItem.antagonist_name}</div>
-											</div>
-										))}
-									</Fragment>
-								)}
-							</div>
-						}
-					>
-						<div
-						className='border px-2 py-1 rounded-[.25rem]'
-						style={{
-              color: departmentColors[department] ?? '#c5c5c5',
-							borderColor: departmentColors[department] ?? '#c5c5c5'
-            }}
-						>
-							{item.name}
-						</div>
-					</Tooltip>
-				);
-			})}
-			</div>
-		</div>
-		<div className="max-w-full flex flex-col items-center gap-3">
-			<span className="max-w-full text-center text-2xl font-bold overflow-hidden text-ellipsis">İzleyiciler</span>
-			<div className="flex flex-wrap gap-2 justify-center">
-			{roundend_stats.ghosts.map((item, index) => (
-				<div
-					key={index}
-					className='border px-2 py-1 rounded-[.25rem] text-slate-400 border-slate-400 cursor-default'
-				>
-					{item.ckey}
+						return (
+							<Tooltip key={index} content={
+								<div className="flex flex-col gap-1 items-center min-w-64 max-w-96 w-max px-3 py-2 backdrop-blur-[12px] border border-gray-700 rounded-md shadow-lg text-sm text-white">
+									<span className="font-bold text-lg flex flex-col items-center">
+										{name}
+										{ckey && <span className="font-normal text-sm text-gray-400">{ckey}</span>}
+									</span>
+									{job && <span className="text-[--color]" style={colorStyle}>{job}{module && ` (${module})`}</span>}
+									{species && <span>{species}</span>}
+									{antagonist.length > 0 && (
+										<>
+											<span className="font-bold text-[17px]">Antagonist</span>
+											{antagonist.map(({ antagonist_name }, index) => (
+												<span key={index} className="font-medium text-white">{antagonist_name}</span>
+											))}
+										</>
+									)}
+								</div>
+							}>
+								<Link href={`/players/${ckey}`} className="text-center border px-2 py-1 rounded-[.25rem] text-[--color] border-[--color] hover:bg-[--color] hover:text-black transition-colors cursor-pointer" style={colorStyle}>{name}</Link>
+							</Tooltip>
+						);
+					})}
 				</div>
-				))}
 			</div>
-		</div>
+			{/* Ghosts */}
+			<div className="flex flex-col items-center gap-3">
+				<span className="text-center text-3xl font-bold">İzleyiciler</span>
+				<div className="flex flex-wrap justify-center gap-2 px-2 py-6 sm:px-14 md:px-18 xl:px-60">
+					{stats.ghosts.map(({ ckey }, index) => (
+						<Link key={index} href={`/players/${ckey}`} className="border px-2 py-1 rounded-[.25rem] text-slate-400 border-slate-400 hover:bg-slate-400 hover:text-black transition-colors cursor-pointer">{ckey}</Link>
+					))}
+				</div>
+			</div>
 		</div>
 	);
 }
 
 
-type PopulationChartProps = {
-	population: NonNullableRoundData['population'];
+type PopulationProps = {
+	population: RoundData['population'];
 };
 
-function PopulationChart({ population }: PopulationChartProps) {
+function Population({ population }: PopulationProps) {
 	return (
-		<div className="w-full flex flex-col items-center gap-3">
-			<span className="w-full text-center text-2xl font-bold overflow-hidden text-ellipsis">Oyuncu Popülasyonu</span>
+		<div className="w-full flex flex-col items-center gap-3 sm:px-14 lg:px-48">
+			<span className="text-center text-3xl font-bold">Popülasyon</span>
 			<LineChart data={population} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} containerStyle={{ position: 'relative', left: -22 }}>
 				<XAxis dataKey="0" tick={false} padding={{ left: 5, right: 5 }} />
-				<YAxis padding={{ bottom: 5 }} domain={[0, 24]} />
+				<YAxis padding={{ bottom: 5 }} domain={[0, 80]}  />
 				<ChartTooltip cursor={{ opacity: 0.1 }} content={PopulationChartTooltip} contentStyle={{ background: 'transparent', border: 'none' }} itemStyle={{ color: 'rgb(100 116 139)' }} />
 				<Line type="monotone" dataKey="1" unit=" kişi" dot={false} />
 			</LineChart>
@@ -205,16 +180,16 @@ function PopulationChartTooltip({ active, payload, label }: TooltipProps<number,
 }
 
 type LogsProps = {
-	log_files: NonNullableRoundData['log_files'];
+	logs: RoundData['log_files'];
 };
 
-function Logs({ log_files }: LogsProps) {
+function Logs({ logs }: LogsProps) {
 	return (
-		<div className="max-w-full flex flex-col items-center gap-3">
-			<span className="max-w-full text-center text-2xl font-bold overflow-hidden text-ellipsis">Loglar</span>
-			<div className="flex flex-wrap gap-2">
-				{log_files.map((item, index) => (
-					<Link key={index} href={item.src ?? ''} prefetch={false} className={`border ${item.src ? 'border-green-500 text-green-500 hover:bg-green-500' : 'border-gray-400 text-gray-400 hover:bg-gray-400 cursor-not-allowed'} hover:text-black px-2 py-1 rounded-[.25rem] text-sm`}>{item.name}</Link>
+		<div className="flex flex-col items-center gap-3">
+			<span className="text-center text-3xl font-bold">Loglar</span>
+			<div className="flex flex-wrap justify-center gap-2 px-2 py-6 sm:px-14 md:px-18 xl:px-60">
+				{logs.map(({ name, src }, index) => (
+					<Link key={index} href={src || '#'} prefetch={false} className={`border ${src ? 'border-green-500 text-green-500 hover:bg-green-500' : 'border-gray-400 text-gray-400 hover:bg-gray-400 cursor-not-allowed'} hover:text-black px-2 py-1 rounded-[.25rem] text-sm transition-colors`}>{name}</Link>
 				))}
 			</div>
 		</div>
@@ -222,16 +197,15 @@ function Logs({ log_files }: LogsProps) {
 }
 
 type PicturesProps = {
-	pictures: NonNullable<NonNullableRoundData['round_pictures']>;
+	pictures: NonNullable<RoundData['round_pictures']>;
 };
 
 function Pictures({ pictures }: PicturesProps) {
 	return (
-		<div className="w-full flex flex-col items-center">
-			<span className="max-w-full text-center text-2xl font-bold overflow-hidden text-ellipsis">Fotoğraflar</span>
-			<div className="justify-center w-5/6">
-				<ScrollableObjects
-					itemLength={pictures.length}
+		<div className="flex flex-col items-center gap-3">
+			<span className="text-center text-3xl font-bold">Fotoğraflar</span>
+			<div className="w-full px-2 py-6 sm:px-14 md:px-18 xl:px-60">
+				<Carousel
 					gap={12}
 					itemSize={192}
 					breakpoints={{
@@ -243,80 +217,75 @@ function Pictures({ pictures }: PicturesProps) {
 						largeDesktop: 12,
 					}}
 				>
-					{pictures.map((item, index) => (
-						<Tooltip
-							key={index}
-							content={
-							<div className="flex flex-col gap-3 items-center">
-								<b>{item.name}</b>
-								{item.id && (<div className='text-sm text-gray-400'>{item.id}</div>)}
-								{item.caption}
-								{item.desc && (<div dangerouslySetInnerHTML={{ __html: item.desc }}/>)}
+					{pictures.map(({ name, id, caption, desc, src }, index) => (
+						<Tooltip key={index} content={
+							<div className="flex flex-col gap-3 items-center min-w-64 max-w-96 w-max px-3 py-2 backdrop-blur-[12px] border border-gray-700 rounded-md shadow-lg">
+								<span className="font-bold">{name}</span>
+								{id && <div className="text-sm text-gray-400">{id}</div>}
+								{caption}
+								{desc && <div dangerouslySetInnerHTML={{ __html: desc }}/>}
 							</div>
-							}
-						>
-							<div className="bg-black bg-opacity-30 rounded-md p-2 flex flex-col items-center shadow-sm hover:shadow-md transition max-w-[45vw] sm:max-w-[192px]">
+						}>
+							<div className="bg-black bg-opacity-30 rounded-md p-2 flex flex-col gap-2 items-center shadow-sm hover:shadow-md transition max-w-[45vw] sm:max-w-[192px]">
 								<Image
-									src={item.src}
-									loader={pictureLogLoader}
-									alt={item.name ?? ''}
+									src={src}
+									loader={pictureImageLoader}
+									alt={name ?? ''}
 									width={192}
 									height={192}
-									className="object-cover rounded-md image-pixelated w-full h-auto"
+									className="object-cover rounded-md pixelated w-full h-auto select-none"
 									draggable={false}
 								/>
-								<p className="mt-2 text-[10px] sm:text-sm text-center">{item.id}</p>
+								<span className="text-[10px] sm:text-sm text-center">{id}</span>
 							</div>
 						</Tooltip>
 					))}
-				</ScrollableObjects>
+				</Carousel>
 			</div>
 		</div>
 	);
 }
 
 function RoundEndReport({ data }: { data: string }) {
-	const innerHtml = data?.replaceAll('&nbsp;&nbsp;', '&nbsp;');
 	return (
-		<div className="w-full flex flex-col items-center">
-			<span className="max-w-full text-center text-2xl font-bold overflow-hidden text-ellipsis">Round Raporu</span>
-			{innerHtml && (
-				<div dangerouslySetInnerHTML={{ __html: innerHtml }}/>
-			)}
+		<div className="flex flex-col items-center gap-3 max-w-[80%]">
+			<span className="text-center text-3xl font-bold">Round Raporu</span>
+			<div dangerouslySetInnerHTML={{ __html: data.replaceAll('&nbsp;&nbsp;', '&nbsp;') }}/>
 		</div>
 	);
 }
 
 function sortByJob<T extends { job?: string | null }>(arr: T[]) {
-  const jobOrder: Record<string, number> = Object.keys(jobDepartments)
-    .reduce((acc, job, index) => {
-      acc[job] = index;
-      return acc;
+  const jobOrder = Object.keys(jobDepartments)
+    .reduce((prev, job, index) => {
+      prev[job] = index;
+      return prev;
     }, {} as Record<string, number>);
 
-  const known: T[] = [];
-  const unknown: T[] = [];
+  const knowns: T[] = [];
+  const unknowns: T[] = [];
 
   for (const item of arr) {
     if (item.job && jobOrder[item.job] !== undefined) {
-      known.push(item);
+      knowns.push(item);
     } else {
-      unknown.push(item);
+      unknowns.push(item);
     }
   }
 
-  known.sort((a, b) => {
+  knowns.sort((a, b) => {
     return jobOrder[a.job!] - jobOrder[b.job!];
   });
 
   const unknownGroups: Record<string, T[]> = {};
-  for (const item of unknown) {
-    const key = item.job ?? 'No Job';
-    if (!unknownGroups[key]) unknownGroups[key] = [];
-    unknownGroups[key].push(item);
+
+	for (const unknown of unknowns) {
+    const key = unknown.job ?? 'No Job';
+		if (!unknownGroups[key]) unknownGroups[key] = [];
+    unknownGroups[key].push(unknown);
   }
 
   const groupedUnknowns = Object.values(unknownGroups).flat();
 
-  return [...known, ...groupedUnknowns];
+  return [...knowns, ...groupedUnknowns];
 }

@@ -100,15 +100,7 @@ export type RoundData = {
 		z: number | null,
 		holder: string | null,
 	} | null;
-	round_pictures: {
-		id: string;
-		desc: string | null;
-		name: string | null;
-		caption: string | null;
-		pixel_size_x: number;
-		pixel_size_y: number;
-		src: string;
-	}[] | null;
+	round_pictures: RoundPicture[];
 	log_files: {
 		name: string;
 		src: string | null;
@@ -116,17 +108,48 @@ export type RoundData = {
 	roundend_stats: RoundStats | null
 };
 
+export type Picture = {
+	tag: unknown; // ?
+	id: string;
+	desc: string | null;
+	name: string | null;
+	caption: string | null;
+	pixel_size_x: number;
+	pixel_size_y: number;
+	logpath: string;
+};
+
+type RoundPicture = Omit<Picture, 'logpath' | 'tag'> & { src: string; };
+
+export type RawRoundStats = {
+	escapees: {
+		humans: Record<string, RoundPlayer> | [];
+		silicons: Record<string, RoundPlayer> | [];
+		others: Record<string, RoundPlayer> | [];
+	};
+	abandoned: {
+		humans: Record<string, RoundPlayer> | [];
+		silicons: Record<string, RoundPlayer> | [];
+		others: Record<string, RoundPlayer> | [];
+	};
+	ghosts: Record<string, RoundPlayer> | [];
+	'additional data': {
+		'station integrity': number;
+		[key: string]: unknown;
+	};
+};
+
 export type RoundStats = {
 	living: {
-		humans: MobType[];
-		silicons: MobType[];
-		others: MobType[];
+		humans: RoundPlayer[];
+		silicons: RoundPlayer[];
+		others: RoundPlayer[];
 	};
-	ghosts: MobType[];
+	ghosts: RoundPlayer[];
 	station_integrity: number;
 } | null;
 
-export type MobType = {
+export type RoundPlayer = {
 	name: string;
 	ckey: string | null;
 	job: string | null;

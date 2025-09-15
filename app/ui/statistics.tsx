@@ -279,8 +279,8 @@ function Event({ item }: { item: Death | Citation }) {
 					</div>
 					<div className="w-full mt-2 flex justify-between">
 						<div className="flex flex-wrap gap-2">
-							<Link href={`/rounds/${item.round_id}`} className="border border-red-400 text-red-400 hover:bg-red-400 hover:text-black px-2 py-1 rounded-[.25rem] text-xs">Round {item.round_id}</Link>
-							{item.suicide && <div className="border border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black px-2 py-1 rounded-[.25rem] text-xs cursor-pointer">İntihar</div>}
+							<Link href={`/rounds/${item.round_id}`} className="border border-red-400 text-red-400 hover:bg-red-400 hover:text-black px-2 py-1 rounded-[.25rem] text-xs transition-colors">Round {item.round_id}</Link>
+							{item.suicide && <div className="border border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black px-2 py-1 rounded-[.25rem] text-xs">İntihar</div>}
 						</div>
 						<div className="flex items-center gap-2 [&>span]:text-sm">
 							<span title="Brute" className="text-red-500">{item.bruteloss}</span>
@@ -313,7 +313,7 @@ function Event({ item }: { item: Death | Citation }) {
 					)}
 					<div className="w-full mt-2 flex">
 						<div className="flex flex-wrap">
-							<Link href={`/rounds/${item.round_id}`} className="border border-red-400 text-red-400 hover:bg-red-400 hover:text-black px-2 py-1 rounded-[.25rem] text-xs">Round {item.round_id}</Link>
+							<Link href={`/rounds/${item.round_id}`} className="border border-red-400 text-red-400 hover:bg-red-400 hover:text-black px-2 py-1 rounded-[.25rem] text-xs transition-colors">Round {item.round_id}</Link>
 						</div>
 					</div>
 				</div>

@@ -1,4 +1,4 @@
-import '@/app/globals.css';
+import '@/app/styles/globals.css';
 
 import localFont from 'next/font/local';
 import Image from 'next/image';

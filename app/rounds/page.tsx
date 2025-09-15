@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 import { openGraph, title } from '@/app/metadata';
-import Rounds from '@/app/ui/rounds';
+import RoundSearch from '@/app/ui/round-search';
 
 export const metadata: Metadata = {
 	title: 'Roundlar',
@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-	return <Rounds></Rounds>;
+	return <RoundSearch />;
 }

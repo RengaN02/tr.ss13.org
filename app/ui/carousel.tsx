@@ -1,8 +1,7 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-type ScrollableObjectsProps = {
-  children: ReactNode[];
-	itemLength: number;
+type CarouselProps = {
+  children: React.ReactNode[];
 	itemSize?: number;
   gap?: number;
   breakpoints?: {
@@ -15,9 +14,8 @@ type ScrollableObjectsProps = {
   };
 };
 
-export default function ScrollableObjects({
+export default function Carousel({
   children,
-	itemLength,
   itemSize = 76,
   gap = 8,
   breakpoints = {
@@ -28,7 +26,7 @@ export default function ScrollableObjects({
     desktop: 8, // ≤ 2160px
     largeDesktop: 10, // > 2160px
   },
-}: ScrollableObjectsProps) {
+}: CarouselProps) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const innerRef = useRef<HTMLDivElement | null>(null);
 
@@ -37,8 +35,8 @@ export default function ScrollableObjects({
 
 	const [visibleItems, setVisibleItems] = useState(breakpoints.desktop);
 
-	const ITEM_TOTAL = itemSize + gap;
-	const DESIRED_CLIENT_WIDTH = gap + visibleItems * itemSize + (visibleItems - 1) * gap;
+	const itemTotal = itemSize + gap;
+	const desiredClientWidth = gap + visibleItems * itemSize + (visibleItems - 1) * gap;
 
 	useEffect(() => {
 		const checkDevice = () => {
@@ -58,7 +56,7 @@ export default function ScrollableObjects({
 			} else {
 				visibleCount = breakpoints.largeDesktop;
 			}
-			setVisibleItems(Math.min(visibleCount, itemLength));
+			setVisibleItems(Math.min(visibleCount, children.length));
 		};
 
 		checkDevice();
@@ -68,7 +66,7 @@ export default function ScrollableObjects({
 		return () => {
 			window.removeEventListener('resize', checkDevice);
 		};
-	}, [breakpoints.mobileSmall, breakpoints.mobile, breakpoints.tabletSmall, breakpoints.tablet, breakpoints.desktop, breakpoints.largeDesktop, itemLength]);
+	}, [breakpoints.mobileSmall, breakpoints.mobile, breakpoints.tabletSmall, breakpoints.tablet, breakpoints.desktop, breakpoints.largeDesktop, children.length]);
 
 	const updateButtons = useCallback(() => {
 		if (!containerRef.current) return;
@@ -90,7 +88,7 @@ export default function ScrollableObjects({
 		return () => {
 			window.removeEventListener('resize', onResize);
 		};
-	}, [updateButtons, itemLength]);
+	}, [updateButtons, children.length]);
 
 	const scrollByItems = (direction: 'left' | 'right') => {
 		const container = containerRef.current;
@@ -102,20 +100,20 @@ export default function ScrollableObjects({
 		const innerPadding = parseFloat(innerStyle.paddingLeft) || 0;
 
 		const relScroll = container.scrollLeft - innerPadding;
-		const currentIndex = Math.round(relScroll / ITEM_TOTAL);
+		const currentIndex = Math.round(relScroll / itemTotal);
 
-		const visibleCount = Math.max(1, Math.floor(container.clientWidth / ITEM_TOTAL));
+		const visibleCount = Math.max(1, Math.floor(container.clientWidth / itemTotal));
 		const step = visibleCount >= 3 ? 2 : 1;
 
 		let targetIndex =
 			direction === 'left' ? currentIndex - step : currentIndex + step;
 
-		const maxIndex = Math.max(0, itemLength - visibleCount);
+		const maxIndex = Math.max(0, children.length - visibleCount);
 
 		if (targetIndex < 0) targetIndex = 0;
 		if (targetIndex > maxIndex) targetIndex = maxIndex;
 
-		const targetScroll = innerPadding + targetIndex * ITEM_TOTAL;
+		const targetScroll = innerPadding + targetIndex * itemTotal;
 		const maxScroll = container.scrollWidth - container.clientWidth;
 		const finalScroll = Math.max(0, Math.min(targetScroll, maxScroll));
 
@@ -218,12 +216,13 @@ export default function ScrollableObjects({
 		};
 	}, [updateButtons]);
 
-	if (itemLength === 0) return <></>;
+	if (children.length === 0) return <></>;
 
 	return (
 		<div className="w-full flex items-center gap-3 relative">
 			<button
 				className="p-2 rounded-full focus:outline-none bg-slate-100 bg-opacity-0 hover:bg-opacity-20 disabled:opacity-40 transition-colors"
+				style={{ cursor: canScrollLeft ? 'pointer' : 'not-allowed' }}
 				onClick={() => scrollByItems('left')}
 				disabled={!canScrollLeft}
 				title="Önceki"
@@ -232,7 +231,7 @@ export default function ScrollableObjects({
 			</button>
 			<div
 				className="overflow-x-auto overflow-y-visible scrollbar-hidden flex gap-2 py-2 px-1 touch-pan-x cursor-grab w-full scrollling-touch"
-				style={{ maxWidth: `${DESIRED_CLIENT_WIDTH}px`, ...(!canScrollLeft && !canScrollRight) && { justifyContent: 'center' } }}
+				style={{ maxWidth: `${desiredClientWidth}px`, ...(!canScrollLeft && !canScrollRight) && { justifyContent: 'center' } }}
 				ref={containerRef}
 				onScroll={() => updateButtons()}
 			>
@@ -242,6 +241,7 @@ export default function ScrollableObjects({
 			</div>
 			<button
 				className="p-2 rounded-full focus:outline-none bg-slate-100 bg-opacity-0 hover:bg-opacity-20 disabled:opacity-40 transition-colors"
+				style={{ cursor: canScrollRight ? 'pointer' : 'not-allowed' }}
 				onClick={() => scrollByItems('right')}
 				disabled={!canScrollRight}
 				title="Sonraki"
@@ -251,4 +251,3 @@ export default function ScrollableObjects({
 		</div>
 	);
 }
-

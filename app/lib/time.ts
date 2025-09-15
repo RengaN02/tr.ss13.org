@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-export function relativeTime(past: string, future: string | undefined): string {
+export function relativeTime(past: string, future?: string): string {
 	let past_ = dayjs(past);
 	const future_ = dayjs(future);
 
@@ -53,7 +53,7 @@ export function minutesToHours(minutes: number): string {
 	return `${hours ? `${hours} saat ` : ''}${remainder} dakika`;
 }
 
-// YYYY-MM-DD HH:mm:ss TO YYYY/MM/DD
+/** Converts `YYYY-MM-DD HH:mm:ss` to `YYYY/MM/DD` */
 export function formatDate(date: string) {
 	return date.split(' ')[0].replaceAll('-', '/');
 }

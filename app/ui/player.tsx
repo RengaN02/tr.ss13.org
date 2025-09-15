@@ -13,10 +13,10 @@ import type { Player } from '@/app/lib/definitions';
 import { achievementsImageLoader } from '@/app/lib/image-loader';
 import { relativeTime } from '@/app/lib/time';
 import Button from '@/app/ui/button';
+import Carousel from '@/app/ui/carousel';
 import { BarChart, LineChart} from '@/app/ui/chart';
 import { NumberInput } from '@/app/ui/input';
 import { Navigation } from '@/app/ui/navigation';
-import ScrollableObjects from '@/app/ui/scrollable-objects';
 
 const allRoles = [...roles.nonRoles, ...roles.traitRoles, ...roles.spawnerRoles, ...roles.ghostRoles, ...roles.antagonistRoles];
 
@@ -38,9 +38,9 @@ export default function Player({ player }: PlayerProps) {
 				<span className="max-w-full text-center text-5xl font-bold overflow-hidden text-ellipsis">{player.byond_key}</span>
 				<span>İlk Görülen Round: {player.first_seen_round}</span>
 				<span>Son Görülen Round: {player.last_seen_round}</span>
-				<span>İlk Görülen Tarih: <span title={`${relativeTime(player.first_seen, undefined)} önce`}>{player.first_seen}</span></span>
-				<span>Son Görülen Tarih: <span title={`${relativeTime(player.last_seen, undefined)} önce`}>{player.last_seen}</span></span>
-				<span>BYOND&apos;a Katıldığı Tarih: <span title={`${relativeTime(player.byond_age, undefined)} önce`}>{player.byond_age}</span></span>
+				<span>İlk Görülen Tarih: <span title={`${relativeTime(player.first_seen)} önce`}>{player.first_seen}</span></span>
+				<span>Son Görülen Tarih: <span title={`${relativeTime(player.last_seen)} önce`}>{player.last_seen}</span></span>
+				<span>BYOND&apos;a Katıldığı Tarih: <span title={`${relativeTime(player.byond_age)} önce`}>{player.byond_age}</span></span>
 			</div>
 			{/* Characters */}
 			<div className="flex flex-col items-center gap-3">
@@ -281,7 +281,7 @@ type AchievementsProps = {
 function Achievements({ achievements }: AchievementsProps) {
 	return (
 		<div className="justify-center py-5">
-			<ScrollableObjects itemLength={achievements.length}>
+			<Carousel>
 				{achievements.map(({ achievement_name, achievement_description, achievement_key }) =>
 					<div
 						key={achievement_key}
@@ -291,7 +291,7 @@ function Achievements({ achievements }: AchievementsProps) {
 						role="img"
 					>
 						<Image
-							className="rounded-sm object-cover image-pixelated"
+							className="rounded-sm object-cover pixelated"
 							src={`${achievementsIcons[achievement_key] ?? achievement_key}.png`}
 							loader={achievementsImageLoader}
 							alt={achievement_name || 'Başarım'}
@@ -301,7 +301,7 @@ function Achievements({ achievements }: AchievementsProps) {
 						/>
 					</div>
 				)}
-			</ScrollableObjects>
+			</Carousel>
 		</div>
 	);
 }
@@ -335,7 +335,7 @@ function BanHistory({ bans }: BanHistoryProps) {
 				<span>Round</span>
 				<span>{ban.round_id ?? '—'}</span>
 				<span>Tarih</span>
-				<span title={`${relativeTime(ban.bantime, undefined)} önce`}>{ban.bantime}</span>
+				<span title={`${relativeTime(ban.bantime)} önce`}>{ban.bantime}</span>
 				<span>Süre</span>
 				<span>{ban.expiration_time ? relativeTime(ban.bantime, ban.expiration_time) : 'Kalıcı'}</span>
 				<span>Admin</span>
