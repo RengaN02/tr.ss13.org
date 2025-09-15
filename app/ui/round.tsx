@@ -248,7 +248,7 @@ function Pictures({ pictures }: PicturesProps) {
 
 function RoundEndReport({ data }: { data: string }) {
 	return (
-		<div className="flex flex-col items-center gap-3 max-w-[80%]">
+		<div className="flex flex-col items-center gap-3 md:px-24 lg:px-48 xl:px-96">
 			<span className="text-center text-3xl font-bold">Round Raporu</span>
 			<div dangerouslySetInnerHTML={{ __html: data.replaceAll('&nbsp;&nbsp;', '&nbsp;') }}/>
 		</div>
