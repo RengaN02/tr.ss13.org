@@ -4,6 +4,7 @@ import '@/app/styles/round-report.css';
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
 import { Line, Tooltip as ChartTooltip, TooltipProps, XAxis, YAxis } from 'recharts';
 
 import { departmentColors, jobDepartments, threatTiers } from '@/app/lib/constants';
@@ -29,6 +30,10 @@ export default function Round({ round, roundReport, github }: RoundProps) {
 	}
 
 	const stationName = round.station_name || 'Space Station 13';
+
+	useEffect(() => {
+		document.getElementById('navigation')?.scrollIntoView({ behavior: 'smooth' });
+	}, []);
 
 	return (
 		<div className="w-full max-w-full flex-1 flex flex-col items-center gap-5">
@@ -105,24 +110,26 @@ function Players({ antagonists, stats }: PlayersProps) {
 			<div className="flex flex-col items-center gap-3">
 				<span className="text-center text-3xl font-bold">Oyuncular</span>
 				<div className="flex flex-wrap justify-center gap-2 px-2 py-6 sm:px-14 md:px-18 xl:px-60">
-					{sortedLiving.map(({ name, ckey, job, species, module }, index) => {
+					{sortedLiving.map(({ name, ckey: key, job, species, module }, index) => {
 						const department = job ? jobDepartments[job] : '';
 						const colorStyle = { '--color': departmentColors[department] ?? '#c5c5c5' } as React.CSSProperties;
 
-						const antagonist = antagonists.filter(player => player.key === ckey && player.name === name);
+						const antagonist = antagonists.filter(player => player.key === key && player.name === name);
+
+						const ckey = key && key.toLowerCase().replace(/[^a-z0-9-_]/g, ''); // ckey in roundend log is infact not ckey
 
 						return (
 							<Tooltip key={index} content={
 								<div className="flex flex-col gap-1 items-center min-w-64 max-w-96 w-max px-3 py-2 backdrop-blur-[12px] border border-gray-700 rounded-md shadow-lg text-sm text-white">
 									<span className="font-bold text-lg flex flex-col items-center">
 										{name}
-										{ckey && <span className="font-normal text-sm text-gray-400">{ckey}</span>}
+										{key && <span className="font-normal text-sm text-gray-400">{key}</span>}
 									</span>
 									{job && <span className="text-[--color]" style={colorStyle}>{job}{module && ` (${module})`}</span>}
 									{species && <span>{species}</span>}
 									{antagonist.length > 0 && (
 										<>
-											<span className="font-bold text-[17px]">Antagonist</span>
+											<span className="font-bold text-[17px] text-red-500">Antagonist</span>
 											{antagonist.map(({ antagonist_name }, index) => (
 												<span key={index} className="font-medium text-white">{antagonist_name}</span>
 											))}
@@ -130,7 +137,7 @@ function Players({ antagonists, stats }: PlayersProps) {
 									)}
 								</div>
 							}>
-								<Link href={`/players/${ckey}`} className="text-center border px-2 py-1 rounded-[.25rem] text-[--color] border-[--color] hover:bg-[--color] hover:text-black transition-colors cursor-pointer" style={colorStyle}>{name}</Link>
+								<Link href={ckey && `/players/${ckey}` || '#'} className="text-center border px-2 py-1 rounded-[.25rem] text-[--color] border-[--color] hover:bg-[--color] hover:text-black transition-colors cursor-pointer" style={colorStyle}>{name}</Link>
 							</Tooltip>
 						);
 					})}
@@ -140,9 +147,13 @@ function Players({ antagonists, stats }: PlayersProps) {
 			<div className="flex flex-col items-center gap-3">
 				<span className="text-center text-3xl font-bold">İzleyiciler</span>
 				<div className="flex flex-wrap justify-center gap-2 px-2 py-6 sm:px-14 md:px-18 xl:px-60">
-					{stats.ghosts.map(({ ckey }, index) => (
-						<Link key={index} href={`/players/${ckey}`} className="border px-2 py-1 rounded-[.25rem] text-slate-400 border-slate-400 hover:bg-slate-400 hover:text-black transition-colors cursor-pointer">{ckey}</Link>
-					))}
+					{stats.ghosts.map(({ ckey: key }, index) => {
+							const ckey = key && key.toLowerCase().replace(/[^a-z0-9-_]/g, ''); // ckey in roundend log is infact not ckey
+
+							return (
+								<Link key={index} href={ckey && `/players/${ckey}` || '#'} className="border px-2 py-1 rounded-[.25rem] text-slate-400 border-slate-400 hover:bg-slate-400 hover:text-black transition-colors cursor-pointer">{ckey}</Link>
+							);
+					})}
 				</div>
 			</div>
 		</div>

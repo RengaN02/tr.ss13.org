@@ -107,7 +107,8 @@
 	max-width: 380px;
 	padding: 12px 14px;
 	border-radius: 0.25rem;
-	background: #0d141c;
+	background: transparent;
+	backdrop-filter: blur(12px);
 	color: #fff;
 	border: 1px solid var(--card-border);
 	box-shadow: var(--shadow);
