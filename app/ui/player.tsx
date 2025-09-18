@@ -13,6 +13,7 @@ import type { Player } from '@/app/lib/definitions';
 import { achievementsImageLoader } from '@/app/lib/image-loader';
 import { relativeTime } from '@/app/lib/time';
 import Button from '@/app/ui/button';
+import Carousel from '@/app/ui/carousel';
 import { BarChart, LineChart} from '@/app/ui/chart';
 import { NumberInput } from '@/app/ui/input';
 import { Navigation } from '@/app/ui/navigation';
@@ -37,9 +38,9 @@ export default function Player({ player }: PlayerProps) {
 				<span className="max-w-full text-center text-5xl font-bold overflow-hidden text-ellipsis">{player.byond_key}</span>
 				<span>İlk Görülen Round: {player.first_seen_round}</span>
 				<span>Son Görülen Round: {player.last_seen_round}</span>
-				<span>İlk Görülen Tarih: <span title={`${relativeTime(player.first_seen, undefined)} önce`}>{player.first_seen}</span></span>
-				<span>Son Görülen Tarih: <span title={`${relativeTime(player.last_seen, undefined)} önce`}>{player.last_seen}</span></span>
-				<span>BYOND&apos;a Katıldığı Tarih: <span title={`${relativeTime(player.byond_age, undefined)} önce`}>{player.byond_age}</span></span>
+				<span>İlk Görülen Tarih: <span title={`${relativeTime(player.first_seen)} önce`}>{player.first_seen}</span></span>
+				<span>Son Görülen Tarih: <span title={`${relativeTime(player.last_seen)} önce`}>{player.last_seen}</span></span>
+				<span>BYOND&apos;a Katıldığı Tarih: <span title={`${relativeTime(player.byond_age)} önce`}>{player.byond_age}</span></span>
 			</div>
 			{/* Characters */}
 			<div className="flex flex-col items-center gap-3">
@@ -278,250 +279,29 @@ type AchievementsProps = {
 };
 
 function Achievements({ achievements }: AchievementsProps) {
-	const containerRef = useRef<HTMLDivElement | null>(null);
-	const innerRef = useRef<HTMLDivElement | null>(null);
-
-	const [canScrollLeft, setCanScrollLeft] = useState(false);
-	const [canScrollRight, setCanScrollRight] = useState(false);
-
-	const VISIBLE_MOBILE_SMALL = 2; // ≤ 360px
-	const VISIBLE_MOBILE = 3; // ≤ 480px
-	const VISIBLE_TABLET_SMALL = 4; // ≤ 768px
-	const VISIBLE_TABLET = 6; // ≤ 1200px
-	const VISIBLE_DEFAULT = 8; // ≤ 2160px
-	const VISIBLE_LARGE_DESKTOP = 10; // > 2160px
-
-	const [visibleItems, setVisibleItems] = useState(VISIBLE_DEFAULT);
-
-	const ITEM_SIZE = 76;
-	const GAP = 8;
-	const ITEM_TOTAL = ITEM_SIZE + GAP;
-	const DESIRED_CLIENT_WIDTH = GAP + visibleItems * ITEM_SIZE + (visibleItems - 1) * GAP;
-
-	useEffect(() => {
-		const checkDevice = () => {
-			const width = window.innerWidth;
-
-			if (width <= 360) {
-				setVisibleItems(VISIBLE_MOBILE_SMALL);
-			} else if (width <= 480) {
-				setVisibleItems(VISIBLE_MOBILE);
-			} else if (width <= 768) {
-				setVisibleItems(VISIBLE_TABLET_SMALL);
-			} else if (width <= 1200) {
-				setVisibleItems(VISIBLE_TABLET);
-			} else if (width <= 2160) {
-				setVisibleItems(VISIBLE_DEFAULT);
-			} else {
-				setVisibleItems(VISIBLE_LARGE_DESKTOP);
-			}
-		};
-
-		checkDevice();
-
-		window.addEventListener('resize', checkDevice);
-
-		return () => {
-			window.removeEventListener('resize', checkDevice);
-		};
-	}, []);
-
-	const updateButtons = useCallback(() => {
-		if (!containerRef.current) return;
-
-		const { scrollWidth, clientWidth, scrollLeft } = containerRef.current;
-		const maxScroll = scrollWidth - clientWidth;
-
-		setCanScrollLeft(scrollLeft > 1);
-		setCanScrollRight(scrollLeft < maxScroll - 1);
-	}, [containerRef]);
-
-	useEffect(() => {
-		const onResize = () => updateButtons();
-
-		onResize();
-
-		window.addEventListener('resize', onResize);
-
-		return () => {
-			window.removeEventListener('resize', onResize);
-		};
-	}, [updateButtons, achievements.length]);
-
-	const scrollByItems = (direction: 'left' | 'right') => {
-		const container = containerRef.current;
-		const inner = innerRef.current;
-
-		if (!container || !inner) return;
-
-		const innerStyle = getComputedStyle(inner);
-		const innerPadding = parseFloat(innerStyle.paddingLeft) || 0;
-
-		const relScroll = container.scrollLeft - innerPadding;
-		const currentIndex = Math.round(relScroll / ITEM_TOTAL);
-
-		const visibleCount = Math.max(1, Math.floor(container.clientWidth / ITEM_TOTAL));
-		const step = visibleCount >= 3 ? 2 : 1;
-
-		let targetIndex =
-			direction === 'left' ? currentIndex - step : currentIndex + step;
-
-		const maxIndex = Math.max(0, achievements.length - visibleCount);
-
-		if (targetIndex < 0) targetIndex = 0;
-		if (targetIndex > maxIndex) targetIndex = maxIndex;
-
-		const targetScroll = innerPadding + targetIndex * ITEM_TOTAL;
-		const maxScroll = container.scrollWidth - container.clientWidth;
-		const finalScroll = Math.max(0, Math.min(targetScroll, maxScroll));
-
-		if (finalScroll !== container.scrollLeft) {
-			container.scrollTo({ left: finalScroll, behavior: 'smooth' });
-		}
-	};
-
-	useEffect(() => {
-		const container = containerRef.current;
-		if (!container) return;
-
-		let isDown = false;
-		let startX = 0;
-		let startScroll = 0;
-		let lastX = 0;
-		let lastT = 0;
-		let velocity = 0;
-		let rafId: number | null = null;
-
-		const onPointerDown = (event: PointerEvent) => {
-			if (event.pointerType === 'touch') return;
-
-			isDown = true;
-			startX = event.clientX;
-			startScroll = container.scrollLeft;
-			lastX = startX;
-			lastT = performance.now();
-			velocity = 0;
-
-			container.style.cursor = 'grabbing';
-			container.setPointerCapture(event.pointerId);
-
-			if (rafId) {
-				cancelAnimationFrame(rafId);
-				rafId = null;
-			}
-		};
-
-		const onPointerMove = (event: PointerEvent) => {
-			if (!isDown) return;
-
-			const now = performance.now();
-			const dx = event.clientX - lastX;
-			const dt = now - lastT || 16;
-
-			container.scrollLeft = startScroll - (event.clientX - startX);
-
-			lastX = event.clientX;
-			lastT = now;
-			velocity = -dx / dt;
-
-			event.preventDefault();
-		};
-
-		const startInertia = () => {
-			const friction = 0.95;
-			let scroll = velocity * 16;
-
-			const step = () => {
-				container.scrollLeft += scroll;
-				scroll *= friction;
-
-				if (Math.abs(scroll) > 0.5) {
-					rafId = requestAnimationFrame(step);
-				} else {
-					rafId = null;
-					updateButtons();
-				}
-			};
-
-			rafId = requestAnimationFrame(step);
-		};
-
-		const onPointerUp = (event: PointerEvent) => {
-			if (!isDown) return;
-
-			isDown = false;
-
-			container.style.cursor = 'grab';
-			container.releasePointerCapture(event.pointerId);
-
-			if (Math.abs(velocity) > 0.001) {
-				startInertia();
-			} else {
-				updateButtons();
-			}
-		};
-
-		container.addEventListener('pointerdown', onPointerDown);
-		window.addEventListener('pointermove', onPointerMove);
-		window.addEventListener('pointerup', onPointerUp);
-
-		return () => {
-			if (rafId) cancelAnimationFrame(rafId);
-
-			container.removeEventListener('pointerdown', onPointerDown);
-			window.removeEventListener('pointermove', onPointerMove);
-			window.removeEventListener('pointerup', onPointerUp);
-		};
-	}, [updateButtons]);
-
-	if (achievements.length === 0) return <></>;
-
 	return (
-		<div className="w-full py-5 flex items-center gap-3 justify-center">
-			<button
-				className="p-2 rounded-full focus:outline-none bg-slate-100 bg-opacity-0 hover:bg-opacity-20 disabled:opacity-40 transition-colors"
-				onClick={() => scrollByItems('left')}
-				disabled={!canScrollLeft}
-				title="Önceki"
-			>
-				<span className="text-xl">‹</span>
-			</button>
-			<div
-				className="overflow-x-auto scrollbar-hidden flex gap-2 py-2 px-1 touch-pan-x cursor-grab w-full scrollling-touch"
-				style={{ maxWidth: `${DESIRED_CLIENT_WIDTH}px`, ...(!canScrollLeft && !canScrollRight) && { justifyContent: 'center' } }}
-				ref={containerRef}
-				onScroll={() => updateButtons()}
-			>
-				<div ref={innerRef} className="flex space-x-2 items-center">
-					{achievements.map(({ achievement_name, achievement_description, achievement_key }) =>
-						<div
-							key={achievement_key}
-							className="flex-shrink-0 w-[76px] h-[76px] rounded-md flex items-center justify-center border border-transparent hover:border-slate-300 hover:border-opacity-20 select-none"
-							title={`${achievement_name}\n${achievement_description}`}
-							aria-label={achievement_key}
-							role="img"
-						>
-							<Image
-								className="rounded-sm object-cover"
-								src={`${achievementsIcons[achievement_key] ?? achievement_key}.png`}
-								loader={achievementsImageLoader}
-								alt={achievement_name || 'Başarım'}
-								width={ITEM_SIZE}
-								height={ITEM_SIZE}
-								draggable={false}
-							/>
-						</div>
-					)}
-				</div>
-			</div>
-			<button
-				className="p-2 rounded-full focus:outline-none bg-slate-100 bg-opacity-0 hover:bg-opacity-20 disabled:opacity-40 transition-colors"
-				onClick={() => scrollByItems('right')}
-				disabled={!canScrollRight}
-				title="Sonraki"
-			>
-				<span className="text-xl">›</span>
-			</button>
+		<div className="justify-center py-5">
+			<Carousel>
+				{achievements.map(({ achievement_name, achievement_description, achievement_key }) =>
+					<div
+						key={achievement_key}
+						className="flex-shrink-0 w-[76px] h-[76px] rounded-md flex items-center justify-center border border-transparent hover:border-slate-300 hover:border-opacity-20 select-none"
+						title={`${achievement_name}\n${achievement_description}`}
+						aria-label={achievement_key}
+						role="img"
+					>
+						<Image
+							className="rounded-sm object-cover pixelated"
+							src={`${achievementsIcons[achievement_key] ?? achievement_key}.png`}
+							loader={achievementsImageLoader}
+							alt={achievement_name || 'Başarım'}
+							width={76}
+							height={76}
+							draggable={false}
+						/>
+					</div>
+				)}
+			</Carousel>
 		</div>
 	);
 }
@@ -555,7 +335,7 @@ function BanHistory({ bans }: BanHistoryProps) {
 				<span>Round</span>
 				<span>{ban.round_id ?? '—'}</span>
 				<span>Tarih</span>
-				<span title={`${relativeTime(ban.bantime, undefined)} önce`}>{ban.bantime}</span>
+				<span title={`${relativeTime(ban.bantime)} önce`}>{ban.bantime}</span>
 				<span>Süre</span>
 				<span>{ban.expiration_time ? relativeTime(ban.bantime, ban.expiration_time) : 'Kalıcı'}</span>
 				<span>Admin</span>

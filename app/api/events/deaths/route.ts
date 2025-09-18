@@ -14,12 +14,28 @@ export async function GET(request: NextRequest) {
 		return new NextResponse('Missing fetch_size param', { status: 400 });
 	}
 
+	if (isNaN(+fetchSize)) {
+		return new NextResponse('fetch_size param is not a number', { status: 400 });
+	}
+
+	if (+fetchSize < 1) {
+		return new NextResponse('fetch_size param is too small', { status: 400 });
+	}
+
 	if (+fetchSize > 40) {
 		return new NextResponse('fetch_size param is too large', { status: 400 });
 	}
 
 	if (!page) {
 		return new NextResponse('Missing page param', { status: 400 });
+	}
+
+	if (isNaN(+page)) {
+		return new NextResponse('page param is not a number', { status: 400 });
+	}
+
+	if (+page < 1) {
+		return new NextResponse('page param is too small', { status: 400 });
 	}
 
 	try {

@@ -81,6 +81,92 @@ export type OverviewData = {
 	time: string;
 };
 
+export type RoundData = {
+	round_id: number;
+	map_name: string;
+	station_name: string | null;
+	commit_hash: string | null;
+	shuttle_name: string | null;
+	initialize_datetime: string;
+	start_datetime: string | null;
+	end_datetime: string | null;
+	shutdown_datetime: string | null;
+	dynamic_tier: number | null;
+	population: [string, number][];
+	antagonists: Antagonist[];
+	nukedisk: {
+		x: number | null,
+		y: number | null,
+		z: number | null,
+		holder: string | null,
+	} | null;
+	round_pictures: RoundPicture[];
+	log_files: {
+		name: string;
+		src: string | null;
+	}[];
+	roundend_stats: RoundStats | null
+};
+
+export type Picture = {
+	tag: unknown; // ?
+	id: string;
+	desc: string | null;
+	name: string | null;
+	caption: string | null;
+	pixel_size_x: number;
+	pixel_size_y: number;
+	logpath: string;
+};
+
+type RoundPicture = Omit<Picture, 'logpath' | 'tag'> & { src: string; };
+
+export type RawRoundStats = {
+	escapees: {
+		humans: Record<string, RoundPlayer> | [];
+		silicons: Record<string, RoundPlayer> | [];
+		others: Record<string, RoundPlayer> | [];
+	};
+	abandoned: {
+		humans: Record<string, RoundPlayer> | [];
+		silicons: Record<string, RoundPlayer> | [];
+		others: Record<string, RoundPlayer> | [];
+	};
+	ghosts: Record<string, RoundPlayer> | [];
+	'additional data': {
+		'station integrity': number;
+		[key: string]: unknown;
+	};
+};
+
+export type RoundStats = {
+	living: {
+		humans: RoundPlayer[];
+		silicons: RoundPlayer[];
+		others: RoundPlayer[];
+	};
+	ghosts: RoundPlayer[];
+	station_integrity: number;
+} | null;
+
+export type RoundPlayer = {
+	name: string;
+	ckey: string | null;
+	job: string | null;
+	species: string | null;
+	module: string | null;
+}
+
+export type Antagonist = {
+	key: string;
+	name: string;
+	antagonist_name: string;
+	objectives: {
+		text: string;
+		result: string;
+	}[];
+}
+
 export interface Middleware {
 	matcher: string[];
 	condition: (request: NextRequest) => boolean;

@@ -4,11 +4,12 @@ import headers from '@/app/lib/headers';
 
 export const revalidate = 3_600; // 1 hour
 
-const url = process.env.API_URL + '/v2/events/citations';
+const url = process.env.API_URL + '/v2/rounds';
 
 export async function GET(request: NextRequest) {
 	const fetchSize = request.nextUrl.searchParams.get('fetch_size');
 	const page = request.nextUrl.searchParams.get('page');
+	const round_id = request.nextUrl.searchParams.get('round_id');
 
 	if (!fetchSize) {
 		return new NextResponse('Missing fetch_size param', { status: 400 });
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
 		return new NextResponse('fetch_size param is too small', { status: 400 });
 	}
 
-	if (+fetchSize > 40) {
+	if (+fetchSize > 80) {
 		return new NextResponse('fetch_size param is too large', { status: 400 });
 	}
 
@@ -38,8 +39,16 @@ export async function GET(request: NextRequest) {
 		return new NextResponse('page param is too small', { status: 400 });
 	}
 
+	if (round_id && isNaN(+round_id)) {
+		return new NextResponse('round_id param is not a number', { status: 400 });
+	}
+
+	if (round_id && +round_id < 1) {
+		return new NextResponse('round_id param is too small', { status: 400 });
+	}
+
 	try {
-		const response = await fetch(url + `?fetch_size=${fetchSize}&page=${page}`, { headers, next: { revalidate } });
+		const response = await fetch(url + `?fetch_size=${fetchSize}&page=${page}${round_id ? `&round_id=${round_id}` : ''}`, { headers, next: { revalidate } });
 
 		if (!response.ok) {
 			return new NextResponse('Internal API Error', { status: 500 });
