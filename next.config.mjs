@@ -5,6 +5,7 @@ const nextConfig = {
 		ppr: 'incremental',
 	},
 	output: 'standalone',
+	htmlLimitedBots: /.*/,
 };
 
 export default nextConfig;
