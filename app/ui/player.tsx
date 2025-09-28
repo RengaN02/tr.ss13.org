@@ -1,12 +1,12 @@
 'use client';
 
-import { faQuestion } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowUp, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Bar, Line, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, Line, Tooltip, type TooltipProps, XAxis, YAxis } from 'recharts';
 
 import { achievementsIcons, roles } from '@/app/lib/constants';
 import type { Player } from '@/app/lib/definitions';
@@ -253,24 +253,59 @@ type ActivityChartProps = {
 function ActivityChart({ activity }: ActivityChartProps) {
 	const data = useMemo(() => {
 		const activityClone = [...activity];
-		const days: { date: string; rounds: number }[] = [];
+		const days: { date: string; rounds: number, index: number }[] = [];
 		const firstDay = dayjs().subtract(180, 'day').startOf('day');
 
 		for (let i = 0; i < 180; i++) {
 			const day = firstDay.add(i, 'day').format('YYYY-MM-DD');
-			days.push({ date: day, rounds: activityClone.find(([date]) => date === day)?.[1] ?? 0 });
+			days.push({ date: day, rounds: activityClone.find(([date]) => date === day)?.[1] ?? 0, index: i });
 		}
 
 		return days;
 	}, [activity]);
 
+	const [slope, intercept] = useMemo(() => {
+		const daysAvg = (data.length - 1) / 2;
+		const roundsAvg = data.reduce((sum, day) => sum + day.rounds, 0) / data.length; // y
+
+		const slope = data.reduce((sum, { rounds }, day) => sum + (day - daysAvg) * (rounds - roundsAvg), 0) / data.reduce((sum, _, day) => sum + (day - daysAvg) ** 2, 0);
+		const intercept = roundsAvg - slope * daysAvg;
+
+		return [slope, intercept];
+	}, [data]);
+
 	return (
 		<LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} containerStyle={{ position: 'relative', left: -22 }}>
 			<XAxis dataKey="date" tick={false} padding={{ left: 5, right: 5 }} />
 			<YAxis padding={{ bottom: 5 }} domain={[0, 24]} />
-			<Tooltip cursor={{ opacity: 0.1 }} separator="" formatter={tooltipFormatter} contentStyle={{ background: 'transparent', border: 'none' }} itemStyle={{ color: 'rgb(100 116 139)' }} />
-			<Line type="monotone" dataKey="rounds" unit=" round" dot={false} />
+			<Tooltip cursor={{ opacity: 0.1 }} content={<ActivityTooltip slope={slope} />} />
+			<Line type="linear" dataKey={({ index }) => slope * index + intercept} stroke="#212121" dot={false} activeDot={false} strokeDasharray="5 5" />
+			<Line type="monotone" dataKey="rounds" dot={false} />
 		</LineChart>
+	);
+}
+
+function ActivityTooltip({ active, payload, label, slope }: TooltipProps<number, string> & { slope: number }) {
+	if (!active || !payload) return null;
+
+	const rounds = payload[1].value ?? 0;
+	const average = payload[0].value ?? 0;
+
+	return (
+		<div className="flex flex-col">
+			<span>{label}</span>
+			<div className="flex gap-2">
+				<span className="text-[#64748B]">{rounds.toString()} round</span>
+				{average > 0 && (
+					<span className={`${rounds > average ? 'text-green-300' : 'text-red-300'} text-opacity-50 transition-colors`}>{(Math.round(average * 10) / 10).toString().replace('.', ',')} ort.</span>
+				)}
+				{slope !== 0 && (slope > 0 ? (
+					<span className="text-green-300 text-opacity-50"><Icon icon={faArrowUp} /></span>
+				) : (
+					<span className="text-red-300 text-opacity-50"><Icon icon={faArrowDown} /></span>
+				))}
+			</div>
+		</div>
 	);
 }
 
