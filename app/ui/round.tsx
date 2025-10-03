@@ -213,7 +213,7 @@ type PicturesProps = {
 
 function Pictures({ pictures }: PicturesProps) {
 	return (
-		<div className="flex flex-col items-center gap-3">
+		<div className="flex flex-col items-center gap-3 max-w-full">
 			<span className="text-center text-3xl font-bold">Fotoğraflar</span>
 			<div className="w-full px-2 py-6 sm:px-14 md:px-18 xl:px-60">
 				<Carousel
