@@ -17,8 +17,6 @@
 	border-radius: 0.25rem;
 	padding: 16px 18px;
 	margin: 14px auto;
-	backdrop-filter: blur(3px);
-	-webkit-backdrop-filter: blur(3px);
 }
 
 .panel.stationborder {
@@ -82,6 +80,18 @@
 
 .panel br:last-child {
 	display: none;
+}
+
+.panel .tooltip_hover br:last-child {
+	display: inline;
+}
+
+.panel .tooltip_hover br:first-of-type {
+  display: none;
+}
+
+.panel .tooltip_hover b {
+  margin-right: 6px;
 }
 
 .tooltip_container {

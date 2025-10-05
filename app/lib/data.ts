@@ -1,7 +1,7 @@
 import { publicLogFiles } from '@/app/lib/constants';
 import type { OverviewData, Picture, Player, RoundData } from '@/app/lib/definitions';
 import headers from '@/app/lib/headers';
-import { formatDate } from '@/app/lib/time';
+import { convertToUTC } from '@/app/lib/time';
 
 const revalidate = 3_600; // 1 hour
 
@@ -102,7 +102,7 @@ export async function getRound(round_id: number): Promise<Omit<RoundData, 'round
 	const roundPictures: RoundData['round_pictures'] = [];
 	const logFiles: RoundData['log_files'] = [];
 
-	const formattedPath = `${formatDate(round.initialize_datetime)}/round-${round_id}`;
+	const formattedPath = `${convertToUTC(round.initialize_datetime, undefined, 'YYYY/MM/DD')}/round-${round_id}`;
 
 	try {
 		const picturesMetadataRequest = await fetch(picture_logs_url + `/${formattedPath}/metadata.json`, { headers, next: { revalidate } });
@@ -135,7 +135,7 @@ export async function getRound(round_id: number): Promise<Omit<RoundData, 'round
 		};
 
 		try {
-			const logFileResponse = await fetch(fileUrl, { method: 'OPTIONS', headers, next: { revalidate } });
+			const logFileResponse = await fetch(fileUrl, { method: 'HEAD', headers, next: { revalidate } });
 
 			if (logFileResponse.ok) {
 				logFile.src = fileUrl;
