@@ -58,17 +58,13 @@ export function minutesToHours(minutes: number): string {
 	return `${hours ? `${hours} saat ` : ''}${remainder} dakika`;
 }
 
-/** Converts `YYYY-MM-DD HH:mm:ss` to `YYYY/MM/DD` */
-export function formatDate(date: string) {
-	return date.split(' ')[0].replaceAll('-', '/');
-}
-
 /**
  * Converts a date string from a given timezone (e.g. 'Europe/Istanbul') to UTC.
  * @param {string} dateStr - Format: 'YYYY-MM-DD HH:mm:ss'
  * @param {string} fromTz - Source timezone, default 'Europe/Istanbul'
- * @returns {string} - Converted UTC time in 'YYYY-MM-DD HH:mm:ss' format
+ * @param {string} format - New time format
+ * @returns {string} - Converted UTC time in specified format
  */
-export function convertToUTC(dateStr: string, fromTz: string = 'Europe/Istanbul') {
-	return dayjs.tz(dateStr, 'YYYY-MM-DD HH:mm:ss', fromTz).utc().format('YYYY-MM-DD HH:mm:ss');
+export function convertToUTC(dateStr: string, fromTz: string = 'Europe/Istanbul', format: string = 'YYYY-MM-DD HH:mm:ss') {
+	return dayjs.tz(dateStr, 'YYYY-MM-DD HH:mm:ss', fromTz).utc().format(format);
 }
