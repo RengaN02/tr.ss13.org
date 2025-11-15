@@ -15,6 +15,7 @@ const navigation = [
 	{ href: '/discord', label: 'Discord', external: true, blank: true },
 	{ href: '/patreon', label: 'Patreon', external: true, blank: true },
 	{ href: '/wiki', label: 'Wiki', external: true },
+	{ href: 'https://trcm.ss13.tr', label: 'TRCM', external: true, blank: true },
 ];
 
 export default function NavLinks() {
@@ -26,7 +27,7 @@ export default function NavLinks() {
 				<Image src={logo} alt="Psychonaut Station logo" quality={100} priority />
 				<span className="text-center text-5xl font-mono">Psychonaut Station</span>
 			</div>
-			<div id="navigation" className="flex flex-wrap items-center justify-center gap-4 py-6 mt-[1px]">
+			<div id="navigation" className="flex flex-wrap items-center justify-center gap-4 py-6 mt-[1px] max-w-lg">
 				{navigation.map(({ href, label, external, blank, sub }) => (
 					<Link key={href} href={href} prefetch={!external} {...(blank && { target: '_blank', rel: 'noreferrer external' })}>
 						<Button active={sub ? pathname.startsWith(href) : pathname === href}>
