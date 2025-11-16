@@ -2,13 +2,11 @@ import { NextResponse } from 'next/server';
 
 import headers from '@/app/lib/headers';
 
-export const revalidate = 30; // 30 seconds
-
 const url = process.env.API_URL + '/v2/server';
 
 export async function GET() {
 	try {
-		const response = await fetch(url, { headers, next: { revalidate } });
+		const response = await fetch(url, { headers, next: { revalidate: 30 } });
 
 		if (!response.ok) {
 			return new NextResponse('Internal API Error', { status: 500 });

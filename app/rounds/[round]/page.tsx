@@ -7,8 +7,6 @@ import type { RawRoundStats } from '@/app/lib/definitions';
 import { openGraph, title } from '@/app/metadata';
 import Round from '@/app/ui/round';
 
-export const revalidate = 3_600; // 1 hour
-
 type Props = {
 	params: Promise<{
 		round: number;
