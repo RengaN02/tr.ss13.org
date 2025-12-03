@@ -6,6 +6,7 @@ import Image from 'next/image';
 import background from '@/app/images/background.png';
 import Footer from '@/app/ui/footer';
 import NavLinks from '@/app/ui/nav-links';
+import { Suspense } from 'react';
 
 const geistSans = localFont({
 	src: './fonts/GeistVF.woff',
@@ -26,7 +27,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
 			<body className={`${geistSans.variable} ${geistMono.variable} font-sans text-white`}>
 				<div className="w-screen h-screen overflow-y-auto scrollbar-hidden">
 					<div className="w-screen h-screen flex flex-col overflow-x-hidden scrollbar-thumb-gray scrollbar-track-transparent">
-						<NavLinks />
+						<Suspense>
+							<NavLinks />
+						</Suspense>
 						<div className="flex-1 flex flex-col items-center px-6 pb-6">{children}</div>
 					</div>
 					<div className="w-screen h-screen fixed top-0 left-0 -z-50 pointer-events-none">

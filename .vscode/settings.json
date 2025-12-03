@@ -1,0 +1,9 @@
+{
+	"workbench.editor.customLabels.patterns": {
+		"**/route.ts": "${dirname}/route.ts",
+		"**/page.tsx": "${dirname}/page.tsx",
+		"**/error.tsx": "${dirname}/error.tsx",
+		"**/not-found.tsx": "${dirname}/not-found.tsx",
+		"**/layout.tsx": "${dirname}/layout.tsx",
+	}
+}

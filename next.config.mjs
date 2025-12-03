@@ -1,11 +1,12 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-	experimental: {
-		ppr: 'incremental',
-	},
+	cacheComponents: true,
 	output: 'standalone',
 	htmlLimitedBots: /.*/,
+	images: {
+		qualities: [25, 50, 75, 100],
+	},
 };
 
 export default nextConfig;

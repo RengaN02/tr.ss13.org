@@ -1,6 +1,6 @@
-import type { Middleware } from '@/app/lib/definitions';
+import type { Proxy } from '@/app/lib/definitions';
 
-const middleware: Middleware = {
+export default {
 	matcher: ['/players/:ckey*'],
 	condition(request) {
 		if (request.nextUrl.pathname.startsWith('/players/')) {
@@ -16,6 +16,4 @@ const middleware: Middleware = {
 			return Response.redirect(new URL(url, request.nextUrl));
 		}
 	},
-};
-
-export default middleware;
+} satisfies Proxy;

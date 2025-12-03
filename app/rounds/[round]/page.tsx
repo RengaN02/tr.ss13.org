@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	};
 }
 
-export default async function Page({ params }: Props) {
+async function Page_({ params }: Props) {
 	const { round: roundId } = await params;
 
 	const round = await getRound(roundId);
@@ -47,4 +48,12 @@ export default async function Page({ params }: Props) {
 	const fullRound = { ...round, roundend_stats: parsedStats };
 
 	return <Round round={fullRound} roundReport={report} github={process.env.SERVER_GITHUB}/>;
+}
+
+export default async function Page({ params }: Props) {
+	return (
+		<Suspense>
+			<Page_ params={params} />
+		</Suspense>
+	)
 }

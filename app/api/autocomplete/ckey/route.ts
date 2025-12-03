@@ -2,8 +2,6 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 import headers from '@/app/lib/headers';
 
-export const dynamic = 'force-dynamic';
-
 const url = process.env.API_URL + '/v2/autocomplete/ckey?ckey=';
 
 export async function GET(request: NextRequest) {

@@ -167,7 +167,7 @@ export type Antagonist = {
 	}[];
 }
 
-export interface Middleware {
+export interface Proxy {
 	matcher: string[];
 	condition: (request: NextRequest) => boolean;
 	action: (request: NextRequest) => Response | void;
