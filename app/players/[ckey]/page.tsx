@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 import { getPlayer } from '@/app/lib/data';
 import { openGraph, title } from '@/app/metadata';
 import Player from '@/app/ui/player';
-import { Suspense } from 'react';
 
 type Props = {
 	params: Promise<{
@@ -43,5 +43,5 @@ export default async function Page({ params }: Props) {
 		<Suspense>
 			<Page_ ckey={ckey} />
 		</Suspense>
-	)
+	);
 }

@@ -1,6 +1,6 @@
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 import { parseRoundStats } from '@/app/lib/conversion';
 import { getLogJson, getLogText, getRound } from '@/app/lib/data';
@@ -55,5 +55,5 @@ export default async function Page({ params }: Props) {
 		<Suspense>
 			<Page_ params={params} />
 		</Suspense>
-	)
+	);
 }

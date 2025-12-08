@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server';
 
 import headers from '@/app/lib/headers';
 
-const url = process.env.API_URL + '/v2/server';
+const endpoint = process.env.API_URL + '/v2/server';
 
 export async function GET() {
 	try {
-		const response = await fetch(url, { headers, next: { revalidate: 30 } });
+		const response = await fetch(endpoint, { headers, next: { revalidate: 30 } });
 
 		if (!response.ok) {
-			return new NextResponse('Internal API Error', { status: 500 });
+			throw new Error('Failed to fetch');
 		}
 
 		return NextResponse.json(await response.json());

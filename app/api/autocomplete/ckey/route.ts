@@ -1,21 +1,26 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import * as z from 'zod';
 
 import headers from '@/app/lib/headers';
 
-const url = process.env.API_URL + '/v2/autocomplete/ckey?ckey=';
+const endpoint = process.env.API_URL + '/v2/autocomplete/ckey';
+
+const QuerySchema = z.object({
+	ckey: z.string().min(1).max(32),
+});
 
 export async function GET(request: NextRequest) {
-	const ckey = request.nextUrl.searchParams.get('ckey');
+	const { success, data } = QuerySchema.safeParse(Object.fromEntries(request.nextUrl.searchParams));
 
-	if (!ckey) {
-		return new NextResponse('Missing ckey param', { status: 400 });
+	if (!success) {
+		return new NextResponse('Bad Request', { status: 400 });
 	}
 
 	try {
-		const response = await fetch(url + ckey, { headers, next: { revalidate: 3_600 } });
+		const response = await fetch(`${endpoint}?ckey=${data.ckey}`, { headers, next: { revalidate: 3_600 } });
 
 		if (!response.ok) {
-			return new NextResponse('Internal API Error', { status: 500 });
+			throw new Error('Failed to fetch');
 		}
 
 		return NextResponse.json(await response.json());

@@ -1,46 +1,39 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import * as z from 'zod';
 
 import headers from '@/app/lib/headers';
 
-const url = process.env.API_URL + '/v2/events/deaths';
+const endpoint = process.env.API_URL + '/v2/events/deaths';
+
+const QuerySchema = z.object({
+	fetch_size: z.string().refine(val => {
+		const num = Number(val);
+		return !isNaN(num) && num >= 1 && num <= 40;
+	}, {
+		message: 'fetch_size must be a number between 1 and 40',
+	}),
+	page: z.string().refine(val => {
+		const num = Number(val);
+		return !isNaN(num) && num >= 1;
+	}, {
+		message: 'page must be a number greater than or equal to 1',
+	}),
+});
 
 export async function GET(request: NextRequest) {
-	const fetchSize = request.nextUrl.searchParams.get('fetch_size');
-	const page = request.nextUrl.searchParams.get('page');
+	const { success, data } = QuerySchema.safeParse(Object.fromEntries(request.nextUrl.searchParams));
 
-	if (!fetchSize) {
-		return new NextResponse('Missing fetch_size param', { status: 400 });
+	if (!success) {
+		return new NextResponse('Bad Request', { status: 400 });
 	}
 
-	if (isNaN(+fetchSize)) {
-		return new NextResponse('fetch_size param is not a number', { status: 400 });
-	}
-
-	if (+fetchSize < 1) {
-		return new NextResponse('fetch_size param is too small', { status: 400 });
-	}
-
-	if (+fetchSize > 40) {
-		return new NextResponse('fetch_size param is too large', { status: 400 });
-	}
-
-	if (!page) {
-		return new NextResponse('Missing page param', { status: 400 });
-	}
-
-	if (isNaN(+page)) {
-		return new NextResponse('page param is not a number', { status: 400 });
-	}
-
-	if (+page < 1) {
-		return new NextResponse('page param is too small', { status: 400 });
-	}
+	const { fetch_size: fetchSize, page } = data;
 
 	try {
-		const response = await fetch(url + `?fetch_size=${fetchSize}&page=${page}`, { headers, next: { revalidate: 3_600 } });
+		const response = await fetch(`${endpoint}?fetch_size=${fetchSize}&page=${page}`, { headers, next: { revalidate: 3_600 } });
 
 		if (!response.ok) {
-			return new NextResponse('Internal API Error', { status: 500 });
+			throw new Error('Failed to fetch');
 		}
 
 		return NextResponse.json(await response.json());
