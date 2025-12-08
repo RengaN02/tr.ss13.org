@@ -43,7 +43,16 @@ export const roles = {
 		'Cybersun Space Syndicate', 'Cybersun Space Syndicate Captain', 'Syndicate Drone', 'Venus Human Trap', 'Zombie',
 		'Drone', 'Malfunctioning Bot', 'Free Golem', 'Servant Golem',
 	],
+	all: [] as string[],
 };
+
+roles.all = [
+	...roles.nonRoles,
+	...roles.traitRoles,
+	...roles.antagonistRoles,
+	...roles.ghostRoles,
+	...roles.spawnerRoles,
+];
 
 export const achievementsIcons: Record<string, string> = {
   'Tendril Exterminator': 'tendril',

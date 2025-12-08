@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { parseRoundStats } from '@/app/lib/conversion';
-import { getLogJson, getLogText, getRound } from '@/app/lib/data';
+import { getBasicRound, getLogJson, getLogText, getRound } from '@/app/lib/data';
 import type { RawRoundStats } from '@/app/lib/definitions';
 import { openGraph, title } from '@/app/metadata';
 import Round from '@/app/ui/round';
@@ -17,7 +17,16 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { round: roundId } = await params;
 
-	const round = await getRound(roundId);
+	let round: Awaited<ReturnType<typeof getBasicRound>>;
+
+	try {
+		round = await getBasicRound(roundId);
+	} catch {
+		return {
+			title: '500',
+			openGraph
+		};
+	}
 
 	return {
 		title: round ? `Round ${roundId}` : '404',
@@ -28,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	};
 }
 
-async function Page_({ params }: Props) {
+async function DynamicPage({ params }: Props) {
 	const { round: roundId } = await params;
 
 	const round = await getRound(roundId);
@@ -53,7 +62,7 @@ async function Page_({ params }: Props) {
 export default async function Page({ params }: Props) {
 	return (
 		<Suspense>
-			<Page_ params={params} />
+			<DynamicPage params={params} />
 		</Suspense>
 	);
 }

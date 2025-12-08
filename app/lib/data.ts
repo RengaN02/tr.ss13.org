@@ -1,5 +1,5 @@
 import { publicLogFiles } from '@/app/lib/constants';
-import type { OverviewData, Picture, Player, RoundData } from '@/app/lib/definitions';
+import type { ExtendedRoundData, OverviewData, Picture, Player, RoundData } from '@/app/lib/definitions';
 import headers from '@/app/lib/headers';
 import { convertToUTC } from '@/app/lib/time';
 
@@ -18,7 +18,21 @@ const round_url = process.env.API_URL + '/v2/round?round_id=';
 const picture_logs_url = process.env.CDN_URL + '/pictures';
 const logs_folder_url = process.env.PRODUCTION_URL + '/logs';
 
-export async function getPlayer(ckey: string): Promise<Player> {
+export async function getBasicPlayer(ckey: string): Promise<Player | null> {
+	const response = await fetch(`${player_url}${ckey}`, { headers, next: { revalidate } });
+
+	if (!response.ok) {
+		if (response.status === 404) {
+			return null;
+		}
+
+		throw new Error('Internal API Error');
+	}
+
+	return await response.json();
+}
+
+export async function getPlayer(ckey: string): Promise<Player | null> {
 	const playerPromise = fetch(player_url + ckey, { headers, next: { revalidate } });
 	const charactersPromise = fetch(characters_url + ckey, { headers, next: { revalidate } });
 	const roletimePromise = fetch(roletime_url + ckey, { headers, next: { revalidate } });
@@ -86,7 +100,21 @@ export async function getStatistics(): Promise<OverviewData[]> {
 	return await statisticsResponse.json();
 }
 
-export async function getRound(round_id: number): Promise<Omit<RoundData, 'roundend_stats'> | null> {
+export async function getBasicRound(roundId: number): Promise<RoundData | null> {
+	const response = await fetch(`${round_url}${roundId}`, { headers, next: { revalidate } });
+
+	if (!response.ok) {
+		if (response.status === 404) {
+			return null;
+		}
+
+		throw new Error('Internal API Error');
+	}
+
+	return await response.json();
+}
+
+export async function getRound(round_id: number): Promise<Omit<ExtendedRoundData, 'roundend_stats'> | null> {
 	const roundResponse = await fetch(round_url + round_id, { headers, next: { revalidate } });
 
 	if (!roundResponse.ok) {
@@ -97,10 +125,10 @@ export async function getRound(round_id: number): Promise<Omit<RoundData, 'round
 		throw new Error('Internal API Error');
 	}
 
-	const round: Omit<RoundData, 'round_pictures' | 'log_files' | 'roundend_stats'> = await roundResponse.json();
+	const round: RoundData = await roundResponse.json();
 
-	const roundPictures: RoundData['round_pictures'] = [];
-	const logFiles: RoundData['log_files'] = [];
+	const roundPictures: ExtendedRoundData['round_pictures'] = [];
+	const logFiles: ExtendedRoundData['log_files'] = [];
 
 	const formattedPath = `${convertToUTC(round.initialize_datetime, undefined, 'YYYY/MM/DD')}/round-${round_id}`;
 
@@ -129,7 +157,7 @@ export async function getRound(round_id: number): Promise<Omit<RoundData, 'round
 	for (const file of publicLogFiles) {
 		const fileUrl = `${logs_folder_url}/${formattedPath}/${file}`;
 
-		const logFile: RoundData['log_files'][number] = {
+		const logFile: ExtendedRoundData['log_files'][number] = {
 			name: file,
 			src: null,
 		};

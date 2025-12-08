@@ -2,11 +2,11 @@ import '@/app/styles/globals.css';
 
 import localFont from 'next/font/local';
 import Image from 'next/image';
+import { Suspense } from 'react';
 
-import background from '@/app/images/background.png';
+import background from '@/app/images/background-progressive.jpeg';
 import Footer from '@/app/ui/footer';
 import NavLinks from '@/app/ui/nav-links';
-import { Suspense } from 'react';
 
 const geistSans = localFont({
 	src: './fonts/GeistVF.woff',

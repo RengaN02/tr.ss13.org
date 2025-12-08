@@ -44,7 +44,7 @@ export type Player = {
 		unbanned_datetime: string | null;
 		unbanned_ckey: string | null;
 	}[];
-} | null;
+};
 
 export type Death = {
 	name: string;
@@ -100,12 +100,15 @@ export type RoundData = {
 		z: number | null,
 		holder: string | null,
 	} | null;
+};
+
+export type ExtendedRoundData = RoundData & {
 	round_pictures: RoundPicture[];
 	log_files: {
 		name: string;
 		src: string | null;
 	}[];
-	roundend_stats: RoundStats | null
+	roundend_stats: RoundStats | null;
 };
 
 export type Picture = {

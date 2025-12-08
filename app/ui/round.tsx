@@ -5,11 +5,11 @@ import '@/app/styles/round-report.css';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { Line, Tooltip as ChartTooltip, TooltipProps, XAxis, YAxis } from 'recharts';
+import { Line, Tooltip as ChartTooltip, type TooltipContentProps,XAxis, YAxis } from 'recharts';
 
 import { departmentColors, jobDepartments, threatTiers } from '@/app/lib/constants';
 import { capitalize } from '@/app/lib/conversion';
-import { RoundData } from '@/app/lib/definitions';
+import { ExtendedRoundData, RoundData } from '@/app/lib/definitions';
 import { pictureImageLoader } from '@/app/lib/image-loader';
 import { relativeTime } from '@/app/lib/time';
 import Carousel from '@/app/ui/carousel';
@@ -17,7 +17,7 @@ import { LineChart } from '@/app/ui/chart';
 import Tooltip from '@/app/ui/tooltip';
 
 type RoundProps = {
-	round: RoundData;
+	round: ExtendedRoundData;
 	roundReport: string | null;
 	github: string | undefined;
 };
@@ -97,8 +97,8 @@ export default function Round({ round, roundReport, github }: RoundProps) {
 }
 
 type PlayersProps = {
-	antagonists: RoundData['antagonists'];
-	stats: NonNullable<RoundData['roundend_stats']>;
+	antagonists: ExtendedRoundData['antagonists'];
+	stats: NonNullable<ExtendedRoundData['roundend_stats']>;
 };
 
 function Players({ antagonists, stats }: PlayersProps) {
@@ -179,7 +179,7 @@ function Population({ population }: PopulationProps) {
 	);
 }
 
-function PopulationChartTooltip({ active, payload, label }: TooltipProps<number, string>) {
+function PopulationChartTooltip({ active, payload, label }: TooltipContentProps<number, string>) {
 	if (active && payload && payload.length) {
 				return (
 					<div className="[&>p]:text-center [&>p]:text-gray-100 [&>p:last-child]:text-gray-400 [&>p:last-child]:text-sm">
@@ -191,7 +191,7 @@ function PopulationChartTooltip({ active, payload, label }: TooltipProps<number,
 }
 
 type LogsProps = {
-	logs: RoundData['log_files'];
+	logs: ExtendedRoundData['log_files'];
 };
 
 function Logs({ logs }: LogsProps) {
@@ -208,7 +208,7 @@ function Logs({ logs }: LogsProps) {
 }
 
 type PicturesProps = {
-	pictures: NonNullable<RoundData['round_pictures']>;
+	pictures: NonNullable<ExtendedRoundData['round_pictures']>;
 };
 
 function Pictures({ pictures }: PicturesProps) {

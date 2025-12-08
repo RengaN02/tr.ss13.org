@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Bar, Line, Tooltip, type TooltipProps, XAxis, YAxis } from 'recharts';
+import { Bar, Line, Tooltip, type TooltipContentProps, XAxis, YAxis } from 'recharts';
 
 import { achievementsIcons, roles } from '@/app/lib/constants';
 import type { Player } from '@/app/lib/definitions';
@@ -18,12 +18,8 @@ import { BarChart, LineChart} from '@/app/ui/chart';
 import { NumberInput } from '@/app/ui/input';
 import { Navigation } from '@/app/ui/navigation';
 
-const allRoles = [...roles.nonRoles, ...roles.traitRoles, ...roles.spawnerRoles, ...roles.ghostRoles, ...roles.antagonistRoles];
-
-type NonNullablePlayer = NonNullable<Player>;
-
 type PlayerProps = {
-	player: NonNullablePlayer;
+	player: Player;
 };
 
 export default function Player({ player }: PlayerProps) {
@@ -105,7 +101,7 @@ export default function Player({ player }: PlayerProps) {
 }
 
 type RoletimeChartProps = {
-	roletime: NonNullablePlayer['roletime'];
+	roletime: Player['roletime'];
 };
 
 const tooltipFormatter = (value: number) => [value.toString().replace('.', ','), ''];
@@ -126,7 +122,7 @@ function RoletimeChart({ roletime }: RoletimeChartProps) {
 	});
 
 	const filterJob = useCallback((
-		job: NonNullablePlayer['roletime'][number]['job'],
+		job: Player['roletime'][number]['job'],
 		options: typeof chartOptions
 	) => !(
 		(!options.nonRole && roles.nonRoles.includes(job)) ||
@@ -134,7 +130,7 @@ function RoletimeChart({ roletime }: RoletimeChartProps) {
 		(!options.spawner && roles.spawnerRoles.includes(job)) ||
 		(!options.ghost && roles.ghostRoles.includes(job)) ||
 		(!options.antagonists && roles.antagonistRoles.includes(job)) ||
-		(!options.jobs && !allRoles.includes(job))
+		(!options.jobs && !roles.all.includes(job))
 	), []);
 
 	const roletimeFilter = useCallback(({ job }: { job: string }) => filterJob(job, chartOptions), [filterJob, chartOptions]);
@@ -247,7 +243,7 @@ function RoletimeChart({ roletime }: RoletimeChartProps) {
 }
 
 type ActivityChartProps = {
-	activity: NonNullablePlayer['activity'];
+	activity: Player['activity'];
 };
 
 function ActivityChart({ activity }: ActivityChartProps) {
@@ -277,7 +273,8 @@ function ActivityChart({ activity }: ActivityChartProps) {
 	return (
 		<LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} containerStyle={{ position: 'relative', left: -22 }}>
 			<XAxis dataKey="date" tick={false} padding={{ left: 5, right: 5 }} />
-			<YAxis padding={{ bottom: 5 }} domain={[0, 24]} />
+			<YAxis dataKey="rounds" domain={[0, 24]} padding={{ bottom: 5 }} />
+			{/* @ts-expect-error i couldnt figure out */}
 			<Tooltip cursor={{ opacity: 0.1 }} content={<ActivityTooltip slope={slope} />} />
 			<Line type="linear" dataKey={({ index }) => slope * index + intercept} stroke="#212121" dot={false} activeDot={false} strokeDasharray="5 5" />
 			<Line type="monotone" dataKey="rounds" dot={false} />
@@ -285,7 +282,7 @@ function ActivityChart({ activity }: ActivityChartProps) {
 	);
 }
 
-function ActivityTooltip({ active, payload, label, slope }: TooltipProps<number, string> & { slope: number }) {
+function ActivityTooltip({ active, payload, label, slope }: TooltipContentProps<number, string> & { slope: number }) {
 	if (!active || !payload) return null;
 
 	const rounds = payload[1].value ?? 0;
@@ -310,7 +307,7 @@ function ActivityTooltip({ active, payload, label, slope }: TooltipProps<number,
 }
 
 type AchievementsProps = {
-	achievements: NonNullablePlayer['achievements'];
+	achievements: Player['achievements'];
 };
 
 function Achievements({ achievements }: AchievementsProps) {
@@ -342,7 +339,7 @@ function Achievements({ achievements }: AchievementsProps) {
 }
 
 type BanHistoryProps = {
-	bans: NonNullablePlayer['bans'];
+	bans: Player['bans'];
 };
 
 function BanHistory({ bans }: BanHistoryProps) {
