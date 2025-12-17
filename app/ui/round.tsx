@@ -59,6 +59,9 @@ export default function Round({ round, roundReport, github }: RoundProps) {
 				{round.dynamic_tier && (
 					<span><span>Tehlike Seviyesi:</span> {threatTiers[round.dynamic_tier]}</span>
 				)}
+				{round.storyteller && (
+					<span><span>Storyteller:</span> {capitalize(round.storyteller)}</span>
+				)}
 				{round.shuttle_name && (
 					<span><span>Shuttle:</span> {capitalize(round.shuttle_name)}</span>
 				)}

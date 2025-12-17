@@ -100,6 +100,7 @@ export type RoundData = {
 		z: number | null,
 		holder: string | null,
 	} | null;
+	storyteller: string | null;
 };
 
 export type ExtendedRoundData = RoundData & {
