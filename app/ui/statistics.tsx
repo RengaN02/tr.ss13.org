@@ -36,6 +36,7 @@ const overviewCategories = {
 	dynamic_tier: 'Tehdit',
 	deaths: 'Ölümler',
 	citations: 'Sabıkalar',
+	antagonist_count: 'Düşmanlar'
 };
 
 type OverviewCategory = keyof typeof overviewCategories;
@@ -94,6 +95,9 @@ function Overview({ overview }: { overview: OverviewData[] }) {
 						{selectedCategory === 'citations' && (
 							<Line dataKey="crimes" dot={false} type="monotone" stroke="#fc7a76ff" />
 						)}
+						{selectedCategory === 'antagonist_count' && (
+							<Line dataKey="unique_antagonist_count" dot={false} type="monotone" stroke="#fc7a76ff" />
+						)}
 					</LineChart>
 				</div>
 			</div>
@@ -138,6 +142,14 @@ function OverviewTooltip({ active, payload, label, category }: TooltipProps<numb
 					<div className="[&>p]:text-center [&>p]:text-gray-100 [&>p:last-child]:text-gray-400 [&>p:last-child]:text-sm">
 						<p>{`${payload[0].value} para cezası`}</p>
 						<p>{`${payload[1].value} suç kaydı`}</p>
+						<p>{`Round ${label}`}</p>
+					</div>
+				);
+			case 'antagonist_count':
+				return (
+					<div className="[&>p]:text-center [&>p]:text-gray-100 [&>p:last-child]:text-gray-400 [&>p:last-child]:text-sm">
+						<p>{`${payload[0].value} düşman`}</p>
+						<p>{`${payload[1].value} farklı düşman`}</p>
 						<p>{`Round ${label}`}</p>
 					</div>
 				);
