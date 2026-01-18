@@ -1,12 +1,12 @@
-import { type NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
 
 import headers from '@/app/lib/headers';
 
-const endpoint = process.env.API_URL + '/v2/autocomplete/ckey';
+const endpoint = process.env.API_URL + '/v2/player/favorite_character';
 
 const QuerySchema = z.object({
-	ckey: z.string().min(1).max(32),
+	ckey: z.string().min(1).max(32)
 });
 
 export async function GET(request: NextRequest) {
@@ -16,8 +16,10 @@ export async function GET(request: NextRequest) {
 		return new NextResponse('Bad Request', { status: 400 });
 	}
 
+	const { ckey } = data;
+
 	try {
-		const response = await fetch(`${endpoint}?ckey=${data.ckey}%`, { headers, next: { revalidate: 3_600 } });
+		const response = await fetch(`${endpoint}?ckey=${ckey}`, { headers, next: { revalidate: 3_600 } });
 
 		if (!response.ok) {
 			throw new Error('Failed to fetch');

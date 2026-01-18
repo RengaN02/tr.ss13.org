@@ -1,20 +1,39 @@
 'use client';
 
-import { faArrowDown, faArrowUp, faQuestion } from '@fortawesome/free-solid-svg-icons';
+import {
+	faArrowDown,
+	faArrowUp,
+	faQuestion,
+	faSpinner,
+	faUserCheck,
+	faUserClock,
+	faUserFriends,
+	faUserMinus,
+	faUserPlus,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Bar, Line, Tooltip, type TooltipContentProps, XAxis, YAxis } from 'recharts';
+import useSWRImmutable from 'swr/immutable';
 
+import {
+	acceptFriend,
+	addFriend,
+	declineFriend,
+	removeFriend,
+} from '@/app/lib/actions';
 import { achievementsIcons, roles } from '@/app/lib/constants';
-import type { Player } from '@/app/lib/definitions';
+import type { Friendship, Player } from '@/app/lib/definitions';
+import fetcher from '@/app/lib/fetcher';
 import { achievementsImageLoader } from '@/app/lib/image-loader';
 import { relativeTime } from '@/app/lib/time';
 import Button from '@/app/ui/button';
 import Carousel from '@/app/ui/carousel';
-import { BarChart, LineChart} from '@/app/ui/chart';
+import { BarChart, LineChart } from '@/app/ui/chart';
 import { NumberInput } from '@/app/ui/input';
 import { Navigation } from '@/app/ui/navigation';
 
@@ -31,7 +50,14 @@ export default function Player({ player }: PlayerProps) {
 		<div className="w-full max-w-full flex-1 flex flex-col items-center gap-5">
 			{/* Basic Info */}
 			<div className="max-w-full flex flex-col items-center gap-3">
-				<span className="max-w-full text-center text-5xl font-bold overflow-hidden text-ellipsis">{player.byond_key}</span>
+				<div className="w-full flex justify-center items-center">
+					<div className="relative">
+						<span className="block text-5xl font-bold overflow-hidden text-ellipsis whitespace-nowrap max-w-[80vw]">
+							{player.byond_key || player.ckey}
+						</span>
+						<FriendButton player={player} />
+					</div>
+				</div>
 				<span>İlk Görülen Round: {player.first_seen_round}</span>
 				<span>Son Görülen Round: {player.last_seen_round}</span>
 				<span>İlk Görülen Tarih: <span title={`${relativeTime(player.first_seen)} önce`}>{player.first_seen}</span></span>
@@ -383,5 +409,104 @@ function BanHistory({ bans }: BanHistoryProps) {
 			</div>
 			<Navigation id="bans-navigation" value={currentBan} min={1} max={bans.length} onPrevious={onPrevious} onNext={onNext} onChange={onInputChange} />
 		</>
+	);
+}
+
+function FriendButton({ player }: PlayerProps) {
+	const { data: session } = useSession();
+	const [friendship, setFriendship] = useState<Friendship | null | undefined>(
+		undefined,
+	);
+
+	const { data: checked_friendship, isLoading } = useSWRImmutable<Friendship>(
+		session?.user.ckey
+			? `/api/player/friends/check_friendship?friend_ckey=${player.ckey}`
+			: null,
+		fetcher,
+	);
+
+	useEffect(() => {
+		if (checked_friendship) {
+			setFriendship(checked_friendship);
+		}
+	}, [checked_friendship]);
+
+	if (!session?.user.ckey) return <div></div>;
+	if (friendship === undefined) return <div></div>;
+
+	if(isLoading) {
+		return (
+			<div
+				className="absolute left-full ml-2 top-1/2 -translate-y-1/2 transition transform duration-300 hover:scale-110"
+			>
+			<Icon icon={faSpinner} spin className="text-xl" />
+			</div>
+		);
+	}
+
+	if (friendship?.status === 'pending') {
+		if (friendship.user_ckey === session?.user.ckey) {
+			return (
+				<button
+					className="group absolute left-full ml-2 top-1/2 -translate-y-1/2 transition transform duration-300 hover:scale-110"
+					onClick={async () => {
+						declineFriend(session?.user.ckey, friendship.id).then((res) =>
+							setFriendship(res),
+						);
+					}}
+				>
+					<Icon
+						icon={faUserClock}
+						className="block group-hover:hidden text-xl"
+					/>
+					<Icon
+						icon={faUserMinus}
+						className="hidden group-hover:block text-xl"
+					/>
+				</button>
+			);
+		} else if (friendship.friend_ckey === session?.user.ckey) {
+			return (
+				<button
+					className="absolute left-full ml-2 top-1/2 -translate-y-1/2 transition transform duration-300 hover:scale-110"
+					onClick={async () => {
+						acceptFriend(session?.user.ckey, friendship.id).then((res) =>
+							setFriendship(res),
+						);
+					}}
+				>
+					<Icon icon={faUserCheck} className="text-xl" />
+				</button>
+			);
+		}
+	} else if (friendship?.status === 'accepted') {
+		return (
+			<button
+				className="group absolute left-full ml-2 top-1/2 -translate-y-1/2 transition transform duration-300 hover:scale-110"
+				onClick={async () => {
+					removeFriend(session?.user.ckey, friendship.id).then((res) =>
+						setFriendship(res),
+					);
+				}}
+			>
+				<Icon
+					icon={faUserFriends}
+					className="block group-hover:hidden text-xl"
+				/>
+				<Icon icon={faUserMinus} className="hidden group-hover:block text-xl" />
+			</button>
+		);
+	}
+	return (
+		<button
+			className="absolute left-full ml-2 top-1/2 -translate-y-1/2 transition transform duration-300 hover:scale-110"
+			onClick={async () => {
+				addFriend(session?.user.ckey, player.ckey).then((res) =>
+					setFriendship(res),
+				);
+			}}
+		>
+			<Icon icon={faUserPlus} className="text-xl" />
+		</button>
 	);
 }

@@ -85,7 +85,7 @@ function ServerSkeleton() {
 			<span className="py-1 mt-2">&nbsp;</span>
 			<div className="h-0 relative bottom-1/2 flex items-center">
 				<div className="w-12 h-12 flex items-center justify-center opacity-50">
-					<Icon icon={faSpinner} size="3x" spin />
+					<Icon icon={faSpinner} size="3x" spin/>
 				</div>
 			</div>
 		</div>

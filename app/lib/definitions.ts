@@ -33,17 +33,7 @@ export type Player = {
 		value: number | null;
 		timestamp: string;
 	}[];
-	bans: {
-		bantime: string;
-		round_id: number | null;
-		roles: string | null;
-		expiration_time: string | null;
-		reason: string;
-		ckey: string | null;
-		a_ckey: string;
-		unbanned_datetime: string | null;
-		unbanned_ckey: string | null;
-	}[];
+	bans: Ban[];
 };
 
 export type Death = {
@@ -95,10 +85,10 @@ export type RoundData = {
 	population: [string, number][];
 	antagonists: Antagonist[];
 	nukedisk: {
-		x: number | null,
-		y: number | null,
-		z: number | null,
-		holder: string | null,
+		x: number | null;
+		y: number | null;
+		z: number | null;
+		holder: string | null;
 	} | null;
 	storyteller: string | null;
 };
@@ -123,7 +113,7 @@ export type Picture = {
 	logpath: string;
 };
 
-type RoundPicture = Omit<Picture, 'logpath' | 'tag'> & { src: string; };
+type RoundPicture = Omit<Picture, 'logpath' | 'tag'> & { src: string };
 
 export type RawRoundStats = {
 	escapees: {
@@ -159,7 +149,7 @@ export type RoundPlayer = {
 	job: string | null;
 	species: string | null;
 	module: string | null;
-}
+};
 
 export type Antagonist = {
 	key: string;
@@ -169,10 +159,76 @@ export type Antagonist = {
 		text: string;
 		result: string;
 	}[];
-}
+};
 
 export interface Proxy {
 	matcher: string[];
 	condition: (request: NextRequest) => boolean;
 	action: (request: NextRequest) => Response | void;
 }
+
+export type TicketLog = {
+	action: string;
+	message: string;
+	sender: string | null;
+	recipient: string | null;
+	timestamp: string;
+};
+
+export type TicketGroup = {
+	ticket_id: number;
+	round_id: number;
+	logs: TicketLog[];
+};
+
+export type Message = {
+	id: number;
+	targetckey: string;
+	adminckey: string;
+	text: string;
+	timestamp: string;
+	server: string | null;
+	round_id: number | null;
+	expire_timestamp: string | null;
+	severity: string | null;
+	playtime: number | null;
+	days_passed: number;
+};
+
+export type Manifest = {
+	id: number;
+	round_id: number | null;
+	ckey: string;
+	character_name: string;
+	job: string;
+	special: string | null;
+	latejoin: boolean;
+	timestamp: string;
+};
+
+export type Friendship = {
+	id: number;
+	user_ckey: string;
+	friend_ckey: string;
+	status: string;
+	created_at: string;
+	updated_at: string;
+};
+
+export type FriendsData = {
+	friends: Friendship[];
+	received: Friendship[];
+	sent: Friendship[];
+};
+
+export type Ban = {
+	bantime: string;
+	round_id: number | null;
+	roles: string | null;
+	expiration_time: string | null;
+	reason: string;
+	ckey: string | null;
+	a_ckey: string;
+	unbanned_datetime: string | null;
+	unbanned_ckey: string | null;
+};

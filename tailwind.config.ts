@@ -20,6 +20,11 @@ const config: Config = {
 			boxShadow: {
 				glow: '0 0 10px var(--tw-shadow-color)',
 			},
+			screens: {
+				wide: '1400px',
+				ultrawide: '1715px',
+				huge: '2000px',
+			},
 		},
 	},
 };

@@ -120,7 +120,7 @@ export default function RoundSearch() {
 				)}
 				<div className="flex flex-col sm:flex-row justify-between items-center gap-3">
 					<div className="flex space-x-4" title="Sayfa boyutu">
-						{pageSizeOptions.map(size => <span key={size} className={`${size === pageSize && 'underline'} hover:underline cursor-pointer`} onClick={() => setPageSize(size)}>{size}</span>)}
+						{pageSizeOptions.map((size) => (<span key={size} className={`${size === pageSize && 'underline'} hover:underline cursor-pointer`} onClick={() => setPageSize(size)}>{size}</span>))}
 					</div>
 					<div className="flex items-center gap-1">
 						{shownData && isLoading && <span className="w-5 flex justify-center opacity-50"><Icon icon={faSpinner} spin /></span>}

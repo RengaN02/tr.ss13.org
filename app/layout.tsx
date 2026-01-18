@@ -6,7 +6,9 @@ import { Suspense } from 'react';
 
 import background from '@/app/images/background-progressive.jpeg';
 import Footer from '@/app/ui/footer';
+import LoginButton from '@/app/ui/login-button';
 import NavLinks from '@/app/ui/nav-links';
+import { Providers } from '@/app/ui/provider';
 
 const geistSans = localFont({
 	src: './fonts/GeistVF.woff',
@@ -25,18 +27,23 @@ export default function RootLayout({ children }: RootLayoutProps) {
 	return (
 		<html lang="tr">
 			<body className={`${geistSans.variable} ${geistMono.variable} font-sans text-white`}>
-				<div className="w-screen h-screen overflow-y-auto scrollbar-hidden">
-					<div className="w-screen h-screen flex flex-col overflow-x-hidden scrollbar-thumb-gray scrollbar-track-transparent">
-						<Suspense>
-							<NavLinks />
-						</Suspense>
-						<div className="flex-1 flex flex-col items-center px-6 pb-6">{children}</div>
+				<Providers>
+					<div className="w-screen h-screen overflow-y-auto scrollbar-hidden">
+						<div className="fixed right-4 top-4 text-sm z-[100]">
+							<LoginButton />
+						</div>
+						<div className="w-screen h-screen flex flex-col overflow-x-hidden scrollbar-thumb-gray scrollbar-track-transparent">
+							<Suspense>
+								<NavLinks />
+							</Suspense>
+							<div className="flex-1 flex flex-col items-center px-6 pb-6">{children}</div>
+						</div>
+						<div className="w-screen h-screen fixed top-0 left-0 -z-50 pointer-events-none">
+							<Image className="w-full h-full object-cover object-left-top" src={background} alt="Website background" quality={100} priority />
+						</div>
+						<Footer />
 					</div>
-					<div className="w-screen h-screen fixed top-0 left-0 -z-50 pointer-events-none">
-						<Image className="w-full h-full object-cover object-left-top" src={background} alt="Website background" quality={100} priority />
-					</div>
-					<Footer />
-				</div>
+				</Providers>
 			</body>
 		</html>
 	);
