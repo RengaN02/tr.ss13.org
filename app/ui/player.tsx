@@ -418,11 +418,9 @@ function FriendButton({ player }: PlayerProps) {
 		undefined,
 	);
 
-	const { data: checked_friendship, isLoading } = useSWRImmutable<Friendship>(
-		session?.user.ckey
-			? `/api/player/friends/check_friendship?friend_ckey=${player.ckey}`
-			: null,
-		fetcher,
+	const { data: checked_friendship, isLoading, error } = useSWRImmutable<Friendship>(
+		`/api/player/friends/check_friendship?friend_ckey=${player.ckey}`,
+		fetcher
 	);
 
 	useEffect(() => {
@@ -431,8 +429,10 @@ function FriendButton({ player }: PlayerProps) {
 		}
 	}, [checked_friendship]);
 
-	if (!session?.user.ckey) return <div></div>;
+	if (!session?.user?.ckey) return <div></div>;
 	if (friendship === undefined) return <div></div>;
+
+	if(error) return <div></div>;
 
 	if(isLoading) {
 		return (
@@ -450,7 +450,7 @@ function FriendButton({ player }: PlayerProps) {
 				<button
 					className="group absolute left-full ml-2 top-1/2 -translate-y-1/2 transition transform duration-300 hover:scale-110"
 					onClick={async () => {
-						declineFriend(session?.user.ckey, friendship.id).then((res) =>
+						declineFriend(session!.user!.ckey!, friendship.id).then((res) =>
 							setFriendship(res),
 						);
 					}}
@@ -470,7 +470,7 @@ function FriendButton({ player }: PlayerProps) {
 				<button
 					className="absolute left-full ml-2 top-1/2 -translate-y-1/2 transition transform duration-300 hover:scale-110"
 					onClick={async () => {
-						acceptFriend(session?.user.ckey, friendship.id).then((res) =>
+						acceptFriend(session!.user!.ckey!, friendship.id).then((res) =>
 							setFriendship(res),
 						);
 					}}
@@ -484,7 +484,7 @@ function FriendButton({ player }: PlayerProps) {
 			<button
 				className="group absolute left-full ml-2 top-1/2 -translate-y-1/2 transition transform duration-300 hover:scale-110"
 				onClick={async () => {
-					removeFriend(session?.user.ckey, friendship.id).then((res) =>
+					removeFriend(session!.user!.ckey!, friendship.id).then((res) =>
 						setFriendship(res),
 					);
 				}}
@@ -501,7 +501,7 @@ function FriendButton({ player }: PlayerProps) {
 		<button
 			className="absolute left-full ml-2 top-1/2 -translate-y-1/2 transition transform duration-300 hover:scale-110"
 			onClick={async () => {
-				addFriend(session?.user.ckey, player.ckey).then((res) =>
+				addFriend(session!.user!.ckey!, player.ckey).then((res) =>
 					setFriendship(res),
 				);
 			}}
