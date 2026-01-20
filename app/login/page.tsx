@@ -1,11 +1,11 @@
 'use client';
 
 import { faDiscord } from '@fortawesome/free-brands-svg-icons';
-import { faSpinner, faArrowRight, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faSignOutAlt,faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { useRouter,useSearchParams } from 'next/navigation';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, Suspense } from 'react';
+import { Suspense,useState } from 'react';
 
 import Button from '@/app/ui/button';
 
