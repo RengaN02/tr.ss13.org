@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import headers from '@/app/lib/headers';
+import { authOptions } from '@/src/lib/auth';
+import headers from '@/src/lib/headers';
 
 const endpoint = process.env.API_URL + '/v2/player/ban';
 

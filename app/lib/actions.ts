@@ -1,6 +1,6 @@
 'use server';
 import type { Friendship } from '@/app/lib/definitions';
-import headers from '@/app/lib/headers';
+import headers from '@/src/lib/headers';
 
 const verify_url = process.env.API_URL + '/v2/verify';
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import headers from '@/app/lib/headers';
+import headers from '@/src/lib/headers';
 
 const endpoint = process.env.API_URL + '/v2/server';
 
