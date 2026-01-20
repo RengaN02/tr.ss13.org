@@ -1,4 +1,8 @@
 import '@/app/styles/globals.css';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false;
 
 import localFont from 'next/font/local';
 import Image from 'next/image';
