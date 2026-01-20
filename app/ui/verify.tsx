@@ -1,10 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { ChangeEvent, KeyboardEvent, useRef, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect,useRef, useState } from 'react';
+import useSWRImmutable from 'swr/immutable';
 
 import { verifyUser } from '@/app/lib/actions';
+import fetcher from '@/app/lib/fetcher';
 import Button from '@/app/ui/button';
 import { NumberInput } from '@/app/ui/input';
 
@@ -15,14 +17,37 @@ export default function VerifyMenu() {
 	const [error, setError] = useState<string | null>(null);
 	const [otp, setOtp] = useState<string[]>(new Array(6).fill(''));
 
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const callbackUrl = searchParams.get('callbackUrl') || '/me';
+
+	const { data: ckey } = useSWRImmutable<string>('/api/player/ckey', fetcher);
+
+	useEffect(() => {
+    if (!ckey) return;
+    if (session?.user?.ckey === ckey) {
+       router.push(callbackUrl);
+       return;
+    }
+    setIsLoading(true);
+    update({
+      ...session,
+      user: {
+        ...session?.user,
+        ckey: ckey
+      }
+    }).then(() => {
+      router.push(callbackUrl);
+    });
+
+  }, [ckey, callbackUrl, session, router, update]);
+
   const r1 = useRef<HTMLInputElement>(null);
   const r2 = useRef<HTMLInputElement>(null);
   const r3 = useRef<HTMLInputElement>(null);
   const r4 = useRef<HTMLInputElement>(null);
   const r5 = useRef<HTMLInputElement>(null);
   const r6 = useRef<HTMLInputElement>(null);
-
-	const router = useRouter();
 
   const inputRefs = [r1, r2, r3, r4, r5, r6];
 
@@ -75,19 +100,31 @@ export default function VerifyMenu() {
     const result = await verifyUser(formattedCode, user_id);
 		if(result.success) {
 			setIsLoading(false);
-			await update({
+			update({
 				...session,
 				user: {
 					...session?.user,
 					ckey: result.ckey
 				}
+			}).then(() => {
+				router.push(callbackUrl);
 			});
-			router.refresh();
 		} else {
 			setIsLoading(false);
 			setError(result.message);
 		}
   };
+
+	if(ckey || isLoading) {
+		return (
+		<div className="flex flex-col items-center justify-center text-white gap-8 p-8">
+			<div className="text-center">
+        <h2 className="text-2xl font-bold mb-2">Hesap Doğrulama</h2>
+        <p className="text-gray-400 text-sm">Yönlendiriliyorsunuz..!</p>
+      </div>
+		</div>
+		);
+	}
 
   return (
     <div className="flex flex-col items-center justify-center text-white gap-8 p-8">
