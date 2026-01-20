@@ -4,7 +4,7 @@ declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
-			ckey: string | null;
+			ckey: string | undefined | null;
     } & DefaultSession['user'];
   }
 
@@ -18,6 +18,6 @@ declare module 'next-auth/jwt' {
   interface JWT {
 		id: string;
 		sub: string;
-    ckey: string | null;
+    ckey: string | undefined | null;
   }
 }
