@@ -8,7 +8,7 @@ export default {
 		}
 		return false;
 	},
-	action(request) {
+	async action(request) {
 		const [, , ckey, ...rest] = request.nextUrl.pathname.split('/');
 
 		if (ckey !== ckey.toLowerCase()) {

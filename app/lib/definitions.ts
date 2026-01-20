@@ -164,7 +164,7 @@ export type Antagonist = {
 export interface Proxy {
 	matcher: string[];
 	condition: (request: NextRequest) => boolean;
-	action: (request: NextRequest) => Response | void;
+	action: (request: NextRequest) => Promise<Response | void>;
 }
 
 export type TicketLog = {
