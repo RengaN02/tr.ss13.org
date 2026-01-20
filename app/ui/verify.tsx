@@ -1,5 +1,7 @@
 'use client';
 
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { useRouter, useSearchParams, } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ChangeEvent, KeyboardEvent, useEffect,useRef, useState } from 'react';
@@ -115,7 +117,7 @@ export default function VerifyMenu() {
 		}
   };
 
-	if(ckey || isLoading) {
+	if(ckey) {
 		return (
 		<div className="flex flex-col items-center justify-center text-white gap-8 p-8">
 			<div className="text-center">
@@ -131,7 +133,7 @@ export default function VerifyMenu() {
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Hesap Doğrulama</h2>
         <p className="text-gray-400 text-sm">Lütfen oyuna girmeye çalışınca karşınıza çıkan 6 haneli kodu girin</p>
-				{!!error && <p className="text-red-800 text-sm">{error}</p>}
+				{!!error && <p className="text-red-500 text-sm">{error}</p>}
       </div>
 
       <div className="flex items-center gap-2" onPaste={handlePaste}>
@@ -158,7 +160,7 @@ export default function VerifyMenu() {
 					onClick={handleSubmit}
 					disabled={otp.some(v => v === '') || isLoading}
 				>
-					Kodu Onayla
+					{isLoading ? <Icon icon={faSpinner} size='3x' spin /> : 'Kodu Onayla'}
 				</button>
 			</Button>
     </div>
