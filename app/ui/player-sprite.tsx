@@ -2,7 +2,7 @@
 import { ImageLoaderProps } from 'next/image';
 import { useEffect, useState } from 'react';
 
-import EmptyChracter from '@/app/images/empty_character.png';
+import EmptyChracter from '@/app/images/empty-character.png';
 
 enum Direction { Front = 0, Back = 1, Right = 2, Left = 3 }
 enum TargetArea { All = 0, Biometric = 1 }

@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { Suspense } from 'react';
 
 import PlayerRounds from '@/app/ui/player-rounds';
-import { authOptions } from '@/src/lib/auth';
+import { authOptions } from '@/app/lib/auth';
 
 async function PlayerRoundsPage() {
 	const session = await getServerSession(authOptions);

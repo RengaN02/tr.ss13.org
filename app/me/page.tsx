@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 
 import { getPlayer } from '@/app/lib/data';
 import Player from '@/app/ui/player';
-import { authOptions } from '@/src/lib/auth';
+import { authOptions } from '@/app/lib/auth';
 
 async function MePage() {
 	const session = await getServerSession(authOptions);

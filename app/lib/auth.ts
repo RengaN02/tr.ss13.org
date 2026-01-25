@@ -1,10 +1,13 @@
-import { NextAuthOptions } from 'next-auth';
-import DiscordProvider from 'next-auth/providers/discord';
+import NextAuth, { type NextAuthOptions } from 'next-auth';
+import Discord from 'next-auth/providers/discord';
 
-import headers from '@/src/lib/headers';
+import headers from '@/app/lib/headers';
 
 const serverEndpoint = process.env.API_URL + '/v2/server';
 const ckeyEndpoint = process.env.API_URL + '/v2/player/discord?discord_id=';
+
+const clientId = process.env.AUTH_DISCORD_ID!;
+const clientSecret = process.env.AUTH_DISCORD_SECRET!;
 
 export const authOptions: NextAuthOptions = {
 	pages: {
@@ -12,17 +15,16 @@ export const authOptions: NextAuthOptions = {
 		error: '/login',
 		signOut: '/login'
   },
-  providers: [
-    DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID!,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-    }),
-  ],
+  providers: [Discord({ clientId, clientSecret })],
   callbacks: {
     async signIn() {
       try {
         const response = await fetch(serverEndpoint, { headers });
-				if(response.ok) return true;
+
+				if (response.ok) {
+					return true;
+				}
+
 				return `/error?message=${response.statusText}&status=${response.status}`;
       } catch {
         console.error('Internal Server Error');
@@ -37,7 +39,8 @@ export const authOptions: NextAuthOptions = {
 
 			if (profile) {
 				try {
-					const response = await fetch(ckeyEndpoint + profile.id, { headers });
+					const response = await fetch(`${ckeyEndpoint}${profile.id}`, { headers });
+
 					if (response.status === 200) {
 						const ckey = await response.json();
 						token.ckey = ckey;
@@ -51,9 +54,9 @@ export const authOptions: NextAuthOptions = {
 					console.error('Internal Server Error');
 				}
 			}
+
 			return token;
 		},
-
 		async session({ session, token }) {
 			if (session?.user) {
 				session.user.ckey = token.ckey;
@@ -63,3 +66,5 @@ export const authOptions: NextAuthOptions = {
 		},
 	},
 };
+
+export const { handlers, signIn, signOut, auth } = NextAuth(authOptions);

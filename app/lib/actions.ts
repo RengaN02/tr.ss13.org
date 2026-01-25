@@ -1,43 +1,62 @@
 'use server';
+
 import type { Friendship } from '@/app/lib/definitions';
-import headers from '@/src/lib/headers';
+import headers from '@/app/lib/headers';
 
-const verify_url = process.env.API_URL + '/v2/verify';
+const verifyEndpont = process.env.API_URL + '/v2/verify';
 
-const add_friendhip_url = process.env.API_URL + '/v2/player/add_friend';
-const remove_friendhip_url = process.env.API_URL + '/v2/player/remove_friend';
-const accept_friendhip_url = process.env.API_URL + '/v2/player/accept_friend';
-const decline_friendhip_url = process.env.API_URL + '/v2/player/decline_friend';
+const addFriendhipEndpoint = process.env.API_URL + '/v2/player/add_friend';
+const removeFriendhipEndpoint = process.env.API_URL + '/v2/player/remove_friend';
+const acceptFriendhipEndpoint = process.env.API_URL + '/v2/player/accept_friend';
+const declineFriendhipEndpoint = process.env.API_URL + '/v2/player/decline_friend';
 
-export async function verifyUser(code: string, discord_id: string) {
+export async function verifyUser(code: string, id: string) {
 	try {
-		const fetch_headers = { ...headers, 'Content-Type': 'application/json' };
-		const response = await fetch(verify_url, {
+		const fetchHeaders = { ...headers, 'Content-Type': 'application/json' };
+
+		const response = await fetch(verifyEndpont, {
 			method: 'POST',
-			headers: fetch_headers,
+			headers: fetchHeaders,
 			body: JSON.stringify({
-				discord_id: discord_id,
+				discord_id: id,
 				one_time_token: code,
 			}),
 		});
 
 		if (!response.ok) {
-			if (response.status === 404) return {success: false, message: 'Doğrulama kodu geçersiz!'};
-			if (response.status === 409) return {success: false, message: 'Bu hesap zaten başka bir hesap ile bağlantılı!'};
+			if (response.status === 404) {
+				return {
+					success: false,
+					message: 'Doğrulama kodu geçersiz!',
+				};
+			} else if (response.status === 409) {
+				return {
+					success: false,
+					message: 'Bu hesap zaten başka bir hesap ile bağlantılı!',
+				};
+			}
+
+			throw new Error('Internal Server Error');
 		}
 
-		const responsejson = await response.json();
+		const ckey = await response.json();
 
-		return { success: true, message: 'Başarıyla doğrulandı!', ckey: responsejson };
+		return {
+			success: true,
+			message: 'Başarıyla doğrulandı!',
+			ckey,
+		};
 	} catch {
-		return { success: false, message: 'Bir sunucu hatası oluştu.' };
+		return {
+			success: false,
+			message: 'Bir sunucu hatası oluştu.'
+		};
 	}
 }
 
-export async function addFriend(ckey: string | null, friend: string): Promise<Friendship | null> {
-	if(ckey === null) return null;
+export async function addFriend(ckey: string, friend: string): Promise<Friendship | null> {
 	try {
-		const response = await fetch(add_friendhip_url + `?ckey=${ckey}&friend=${friend}`, {method: 'POST', headers});
+		const response = await fetch(`${addFriendhipEndpoint}?ckey=${ckey}&friend=${friend}`, { method: 'POST', headers });
 
 		if (!response.ok) return null;
 
@@ -47,10 +66,9 @@ export async function addFriend(ckey: string | null, friend: string): Promise<Fr
 	}
 }
 
-export async function removeFriend(ckey: string | null, friendship_id: number): Promise<Friendship | null> {
-	if(ckey === null) return null;
+export async function removeFriend(ckey: string, friendship: number): Promise<Friendship | null> {
 	try {
-		const response = await fetch(remove_friendhip_url + `?ckey=${ckey}&friendship_id=${friendship_id}`, {method: 'POST', headers});
+		const response = await fetch(`${removeFriendhipEndpoint}?ckey=${ckey}&friendship_id=${friendship}`, { method: 'POST', headers });
 
 		if (!response.ok) return null;
 
@@ -60,10 +78,9 @@ export async function removeFriend(ckey: string | null, friendship_id: number): 
 	}
 }
 
-export async function acceptFriend(ckey: string | null, friendship_id: number): Promise<Friendship | null> {
-	if(ckey === null) return null;
+export async function acceptFriend(ckey: string, friendship: number): Promise<Friendship | null> {
 	try {
-		const response = await fetch(accept_friendhip_url + `?ckey=${ckey}&friendship_id=${friendship_id}`, {method: 'POST', headers});
+		const response = await fetch(`${acceptFriendhipEndpoint}?ckey=${ckey}&friendship_id=${friendship}`, { method: 'POST', headers });
 
 		if (!response.ok) return null;
 
@@ -73,10 +90,9 @@ export async function acceptFriend(ckey: string | null, friendship_id: number): 
 	}
 }
 
-export async function declineFriend(ckey: string | null, friendship_id: number): Promise<Friendship | null> {
-	if(ckey === null) return null;
+export async function declineFriend(ckey: string, friendship: number): Promise<Friendship | null> {
 	try {
-		const response = await fetch(decline_friendhip_url + `?ckey=${ckey}&friendship_id=${friendship_id}`, {method: 'POST', headers});
+		const response = await fetch(`${declineFriendhipEndpoint}?ckey=${ckey}&friendship_id=${friendship}`, { method: 'POST', headers });
 
 		if (!response.ok) return null;
 
@@ -85,5 +101,3 @@ export async function declineFriend(ckey: string | null, friendship_id: number):
 		return null;
 	}
 }
-
-

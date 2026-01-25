@@ -2,8 +2,8 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import * as z from 'zod';
 
-import { authOptions } from '@/src/lib/auth';
-import headers from '@/src/lib/headers';
+import { authOptions } from '@/app/lib/auth';
+import headers from '@/app/lib/headers';
 
 const endpoint = process.env.API_URL + '/v2/player/tickets';
 
@@ -24,17 +24,17 @@ const QuerySchema = z.object({
 
 export async function GET(request: NextRequest) {
 	const { success, data } = QuerySchema.safeParse(Object.fromEntries(request.nextUrl.searchParams));
-	const session = await getServerSession(authOptions);
 
 	if (!success) {
 		return new NextResponse('Bad Request', { status: 400 });
 	}
 
-	if (!session?.user?.ckey) {
+	const session = await getServerSession(authOptions);
+	const ckey = session?.user?.ckey;
+
+	if (!ckey) {
 		return new NextResponse('Unauthorized', { status: 401 });
 	}
-
-	const ckey = session.user.ckey;
 
 	const { fetch_size: fetchSize, page } = data;
 

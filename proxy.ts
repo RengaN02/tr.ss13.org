@@ -13,11 +13,11 @@ export const config = {
 };
 
 export async function proxy(request: NextRequest) {
-	for (const p of proxies) {
-		if (p.condition(request)) {
-			const r = await p.action(request);
-			if (r) {
-				return r;
+	for (const proxy of proxies) {
+		if (proxy.condition(request)) {
+			const response = await proxy.action(request);
+			if (response) {
+				return response;
 			}
 		}
 	}

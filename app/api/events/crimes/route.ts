@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
 
-import headers from '@/src/lib/headers';
+import headers from '@/app/lib/headers';
 
 const endpoint = process.env.API_URL + '/v2/events/crimes';
 

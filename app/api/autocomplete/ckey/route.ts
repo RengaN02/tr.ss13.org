@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
 
-import headers from '@/src/lib/headers';
+import headers from '@/app/lib/headers';
 
 const endpoint = process.env.API_URL + '/v2/autocomplete/ckey';
 
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 	}
 
 	try {
-		const response = await fetch(`${endpoint}?ckey=${data.ckey}%`, { headers, next: { revalidate: 3_600 } });
+		const response = await fetch(`${endpoint}?ckey=${data.ckey}`, { headers, next: { revalidate: 3_600 } });
 
 		if (!response.ok) {
 			throw new Error('Failed to fetch');

@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { Suspense } from 'react';
 
 import Friends from '@/app/ui/player-friends';
-import { authOptions } from '@/src/lib/auth';
+import { authOptions } from '@/app/lib/auth';
 
 async function FriendsPage() {
 	const session = await getServerSession(authOptions);

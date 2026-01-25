@@ -1,7 +1,7 @@
 import { publicLogFiles } from '@/app/lib/constants';
 import type { ExtendedRoundData, OverviewData, Picture, Player, RoundData } from '@/app/lib/definitions';
+import headers from '@/app/lib/headers';
 import { convertToUTC } from '@/app/lib/time';
-import headers from '@/src/lib/headers';
 
 const revalidate = 3_600; // 1 hour
 
