@@ -140,7 +140,7 @@ function Round({ item, ckey }: { item: Manifest, ckey: string }) {
     >
       <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-950/80 border border-white/10 flex-shrink-0 flex items-center justify-center">
         <PlayerSprite
-          imageSrc={`${ckey.toLowerCase()}/${item.character_name.replace(/[\\\n\t/?%*:|<>]|\.\./g, '').replaceAll(' ', '%20').toLowerCase()}.png`}
+          imageSrc={`${ckey.toLowerCase()}/${item.character_name.replace(/[\\\n\t/?%*:|<>]|\.\./g, '').replaceAll(' ', '%20')}.png`}
           direction={0}
           scale={1.5}
 					targetArea={1}

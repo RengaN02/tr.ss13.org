@@ -22,6 +22,10 @@ export async function GET(request: NextRequest) {
 		const response = await get(`${endpoint}?ckey=${ckey}`, 3_600);
 
 		if (!response.ok) {
+			if (response.status === 404) {
+				return new NextResponse('Not Found', { status: 404 });
+			}
+
 			throw new Error('Failed to fetch');
 		}
 

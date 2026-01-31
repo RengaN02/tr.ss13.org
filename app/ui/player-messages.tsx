@@ -1,13 +1,13 @@
 'use client';
 
-import { faCalendarAlt, faClock, faExclamationTriangle,faLayerGroup, faSpinner,faUserShield } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarAlt, faClock, faExclamationTriangle, faLayerGroup, faSpinner, faUserShield } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWRImmutable from 'swr/immutable';
 import { useDebounce } from 'use-debounce';
 
-import { Message as MessageType } from '@/app/lib/definitions';
+import type { Message as MessageType } from '@/app/lib/definitions';
 import fetcher from '@/app/lib/fetcher';
 import { Navigation } from '@/app/ui/navigation';
 
@@ -35,23 +35,22 @@ function Messages() {
 
 	const [shownData, setShownData] = useState<MessageResponse | null>(null);
 
-	const { data, error, isLoading } = useSWRImmutable<MessageResponse>(`/api/player/messages?page=${debouncedPage}&fetch_size=${pageSize}`,
-		fetcher
-	);
+	const { data, error, isLoading } = useSWRImmutable<MessageResponse>(`/api/player/messages?page=${debouncedPage}&fetch_size=${pageSize}`, fetcher);
 
 	useSWRImmutable(`/api/player/messages?page=${debouncedPage + 1}&fetch_size=${pageSize}`, fetcher);
 
 	useEffect(() => {
-		if (data) setShownData(data);
+		if (data) {
+			setShownData(data);
+		}
 	}, [data]);
 
-	const maxPage = useMemo(() =>
-		Math.ceil((shownData?.total_count ?? 1) / pageSize),
-		[pageSize, shownData?.total_count]
-	);
+	const maxPage = useMemo(() => Math.ceil((shownData?.total_count ?? 1) / pageSize), [pageSize, shownData?.total_count]);
 
 	useEffect(() => {
-		if (page > maxPage && maxPage > 0) setPage(maxPage);
+		if (page > maxPage && maxPage > 0) {
+			setPage(maxPage);
+		}
 	}, [page, maxPage]);
 
 	const lastLength = useRef(0);
@@ -76,10 +75,7 @@ function Messages() {
 
 	return (
 		<div className="w-full flex flex-col items-center gap-5">
-			<h1 className="text-center text-3xl font-bold mb-4 flex items-center gap-3">
-				Mesajlar
-			</h1>
-
+			<span className="text-center text-3xl font-bold mb-4 flex items-center gap-3">Mesajlar</span>
 			<div className="w-full flex flex-col">
 				{isLoading && !shownData && (
 					<div className="py-20 flex flex-col items-center justify-center opacity-50">

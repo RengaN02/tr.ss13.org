@@ -419,7 +419,7 @@ function FriendButton({ player }: PlayerProps) {
 	);
 
 	const { data: checked_friendship, isLoading, error } = useSWRImmutable<Friendship>(
-		`/api/player/friends/check-friendship?friend_ckey=${player.ckey}`,
+		`/api/player/friends/check-friendship?friend=${player.ckey}`,
 		fetcher
 	);
 

@@ -195,7 +195,7 @@ function FriendCard({ friend, ckey, friendCkey, mutate }: { friend?: Friendship,
   const [friend_ckey, setFriendCkey] = useState<string | undefined>(friendCkey);
 
   const { data: favorite_character } = useSWRImmutable(friend_ckey ? `/api/player/favorite-character?ckey=${friend_ckey}` : null, fetcher);
-  const { data: checked_friendship } = useSWRImmutable<Friendship>(friend_ckey ? `/api/player/friends/check-friendship?friend_ckey=${friend_ckey}` : null, fetcher);
+  const { data: checked_friendship } = useSWRImmutable<Friendship>(friend_ckey ? `/api/player/friends/check-friendship?friend=${friend_ckey}` : null, fetcher);
 
   useEffect(() => {
     if (checked_friendship) {
@@ -219,7 +219,7 @@ function FriendCard({ friend, ckey, friendCkey, mutate }: { friend?: Friendship,
       <div className="flex items-center gap-2 sm:gap-3 min-w-0">
         <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-md bg-gray-950/80 border border-white/10 flex-shrink-0 flex items-center justify-center overflow-hidden">
           <PlayerSprite
-            imageSrc={`${ckey.toLowerCase()}/${favorite_character?.[0]?.replace(/[\\\n\t/?%*:|<>]|\.\./g, '').replaceAll(' ', '%20').toLowerCase()}.png`}
+            imageSrc={`${friendCkey.toLowerCase()}/${favorite_character?.[0]?.replace(/[\\\n\t/?%*:|<>]|\.\./g, '').replaceAll(' ', '%20')}.png`}
             direction={0}
             scale={1.4}
             targetArea={1}

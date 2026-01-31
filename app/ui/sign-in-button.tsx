@@ -7,11 +7,11 @@ import DropdownMenu from '@/app/ui/dropdown';
 
 const menuItems = [
   { label: 'Hesabım', href: '/me' },
-	{ label: 'Arkadaşlarım', href: '/me/friends' },
-	{ label: 'Geçmiş Roundlarım', href: '/me/rounds' },
-	{ label: 'Banlarım', href: '/me/bans' },
+	{ label: 'Arkadaşlar', href: '/me/friends' },
+	{ label: 'Geçmiş Roundlar', href: '/me/rounds' },
+	{ label: 'Banlar', href: '/me/bans' },
 	{ label: 'Ticketler', href: '/me/tickets' },
-	{ label: 'Admin Mesajları', href: '/me/adminremarks' },
+	{ label: 'Admin Mesajları', href: '/me/admin-remarks' },
 	{ label: 'Çıkış Yap', func: async () => await signOut(), class: 'text-red-500 w-full'}
 ];
 
