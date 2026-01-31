@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 
 import { authOptions } from '@/app/lib/auth';
-import headers from '@/app/lib/headers';
+import { get } from '@/app/lib/headers';
 
 const endpoint = process.env.API_URL + '/v2/player/discord';
 
@@ -15,7 +15,7 @@ export async function GET() {
 	}
 
 	try {
-		const response = await fetch(`${endpoint}?discord_id=${id}`, { headers });
+		const response = await get(`${endpoint}?discord_id=${id}`, 3_600);
 
 		if (!response.ok) {
 			throw new Error('Failed to fetch');

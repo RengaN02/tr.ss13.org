@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
 
-import headers from '@/app/lib/headers';
+import { get } from '@/app/lib/headers';
 
 const endpoint = process.env.API_URL + '/v2/events/crimes';
 
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 	const { fetch_size: fetchSize, page } = data;
 
 	try {
-		const response = await fetch(`${endpoint}?fetch_size=${fetchSize}&page=${page}`, { headers, next: { revalidate: 3_600 } });
+		const response = await get(`${endpoint}?fetch_size=${fetchSize}&page=${page}`, 3_600);
 
 		if (!response.ok) {
 			throw new Error('Failed to fetch');

@@ -1,7 +1,7 @@
 'use server';
 
 import type { Friendship } from '@/app/lib/definitions';
-import headers from '@/app/lib/headers';
+import { post } from '@/app/lib/headers';
 
 const verifyEndpont = process.env.API_URL + '/v2/verify';
 
@@ -12,16 +12,7 @@ const declineFriendhipEndpoint = process.env.API_URL + '/v2/player/decline_frien
 
 export async function verifyUser(code: string, id: string) {
 	try {
-		const fetchHeaders = { ...headers, 'Content-Type': 'application/json' };
-
-		const response = await fetch(verifyEndpont, {
-			method: 'POST',
-			headers: fetchHeaders,
-			body: JSON.stringify({
-				discord_id: id,
-				one_time_token: code,
-			}),
-		});
+		const response = await post(verifyEndpont, { discord_id: id, one_time_token: code });
 
 		if (!response.ok) {
 			if (response.status === 404) {
@@ -56,7 +47,7 @@ export async function verifyUser(code: string, id: string) {
 
 export async function addFriend(ckey: string, friend: string): Promise<Friendship | null> {
 	try {
-		const response = await fetch(`${addFriendhipEndpoint}?ckey=${ckey}&friend=${friend}`, { method: 'POST', headers });
+		const response = await post(`${addFriendhipEndpoint}?ckey=${ckey}&friend=${friend}`);
 
 		if (!response.ok) return null;
 
@@ -68,7 +59,7 @@ export async function addFriend(ckey: string, friend: string): Promise<Friendshi
 
 export async function removeFriend(ckey: string, friendship: number): Promise<Friendship | null> {
 	try {
-		const response = await fetch(`${removeFriendhipEndpoint}?ckey=${ckey}&friendship_id=${friendship}`, { method: 'POST', headers });
+		const response = await post(`${removeFriendhipEndpoint}?ckey=${ckey}&friendship_id=${friendship}`);
 
 		if (!response.ok) return null;
 
@@ -80,7 +71,7 @@ export async function removeFriend(ckey: string, friendship: number): Promise<Fr
 
 export async function acceptFriend(ckey: string, friendship: number): Promise<Friendship | null> {
 	try {
-		const response = await fetch(`${acceptFriendhipEndpoint}?ckey=${ckey}&friendship_id=${friendship}`, { method: 'POST', headers });
+		const response = await post(`${acceptFriendhipEndpoint}?ckey=${ckey}&friendship_id=${friendship}`);
 
 		if (!response.ok) return null;
 
@@ -92,7 +83,7 @@ export async function acceptFriend(ckey: string, friendship: number): Promise<Fr
 
 export async function declineFriend(ckey: string, friendship: number): Promise<Friendship | null> {
 	try {
-		const response = await fetch(`${declineFriendhipEndpoint}?ckey=${ckey}&friendship_id=${friendship}`, { method: 'POST', headers });
+		const response = await post(`${declineFriendhipEndpoint}?ckey=${ckey}&friendship_id=${friendship}`);
 
 		if (!response.ok) return null;
 

@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from 'next-auth';
 import Discord from 'next-auth/providers/discord';
 
-import headers from '@/app/lib/headers';
+import { get } from '@/app/lib/headers';
 
 const serverEndpoint = process.env.API_URL + '/v2/server';
 const ckeyEndpoint = process.env.API_URL + '/v2/player/discord?discord_id=';
@@ -11,15 +11,15 @@ const clientSecret = process.env.AUTH_DISCORD_SECRET!;
 
 export const authOptions: NextAuthOptions = {
 	pages: {
-    signIn: '/login',
-		error: '/login',
-		signOut: '/login'
+    signIn: '/sign-in',
+		error: '/sign-in',
+		signOut: '/sign-in'
   },
   providers: [Discord({ clientId, clientSecret })],
   callbacks: {
     async signIn() {
       try {
-        const response = await fetch(serverEndpoint, { headers });
+        const response = await get(serverEndpoint);
 
 				if (response.ok) {
 					return true;
@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
 
 			if (profile) {
 				try {
-					const response = await fetch(`${ckeyEndpoint}${profile.id}`, { headers });
+					const response = await get(`${ckeyEndpoint}${profile.id}`);
 
 					if (response.status === 200) {
 						const ckey = await response.json();

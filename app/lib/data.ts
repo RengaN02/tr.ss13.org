@@ -1,6 +1,6 @@
 import { publicLogFiles } from '@/app/lib/constants';
 import type { ExtendedRoundData, OverviewData, Picture, Player, RoundData } from '@/app/lib/definitions';
-import headers from '@/app/lib/headers';
+import { get } from '@/app/lib/headers';
 import { convertToUTC } from '@/app/lib/time';
 
 const revalidate = 3_600; // 1 hour
@@ -19,7 +19,7 @@ const picture_logs_url = process.env.CDN_URL + '/pictures';
 const logs_folder_url = process.env.PRODUCTION_URL + '/logs';
 
 export async function getBasicPlayer(ckey: string): Promise<Player | null> {
-	const response = await fetch(`${player_url}${ckey}`, { headers, next: { revalidate } });
+	const response = await get(`${player_url}${ckey}`, revalidate);
 
 	if (!response.ok) {
 		if (response.status === 404) {
@@ -33,12 +33,12 @@ export async function getBasicPlayer(ckey: string): Promise<Player | null> {
 }
 
 export async function getPlayer(ckey: string): Promise<Player | null> {
-	const playerPromise = fetch(player_url + ckey, { headers, next: { revalidate } });
-	const charactersPromise = fetch(characters_url + ckey, { headers, next: { revalidate } });
-	const roletimePromise = fetch(roletime_url + ckey, { headers, next: { revalidate } });
-	const activityPromise = fetch(activity_url + ckey, { headers, next: { revalidate } });
-	const achievementsPromise = fetch(achievements_url + ckey, { headers, next: { revalidate } });
-	const bansPromise = fetch(bans_url + ckey, { headers, next: { revalidate } });
+	const playerPromise = get(player_url + ckey, revalidate);
+	const charactersPromise = get(characters_url + ckey, revalidate);
+	const roletimePromise = get(roletime_url + ckey, revalidate);
+	const activityPromise = get(activity_url + ckey, revalidate);
+	const achievementsPromise = get(achievements_url + ckey, revalidate);
+	const bansPromise = get(bans_url + ckey, revalidate);
 
 	const [
 		playerResponse, charactersResponse,
@@ -87,7 +87,7 @@ export async function getPlayer(ckey: string): Promise<Player | null> {
 }
 
 export async function getStatistics(): Promise<OverviewData[]> {
-	const statisticsResponse = await fetch(statistics_url, { headers, next: { revalidate } });
+	const statisticsResponse = await get(statistics_url, revalidate);
 
 	if (!statisticsResponse.ok) {
 		if (statisticsResponse.status === 404) {
@@ -101,7 +101,7 @@ export async function getStatistics(): Promise<OverviewData[]> {
 }
 
 export async function getBasicRound(roundId: number): Promise<RoundData | null> {
-	const response = await fetch(`${round_url}${roundId}`, { headers, next: { revalidate } });
+	const response = await get(`${round_url}${roundId}`, revalidate);
 
 	if (!response.ok) {
 		if (response.status === 404) {
@@ -115,7 +115,7 @@ export async function getBasicRound(roundId: number): Promise<RoundData | null> 
 }
 
 export async function getRound(round_id: number): Promise<Omit<ExtendedRoundData, 'roundend_stats'> | null> {
-	const roundResponse = await fetch(round_url + round_id, { headers, next: { revalidate } });
+	const roundResponse = await get(round_url + round_id, revalidate);
 
 	if (!roundResponse.ok) {
 		if (roundResponse.status === 404) {
@@ -133,7 +133,7 @@ export async function getRound(round_id: number): Promise<Omit<ExtendedRoundData
 	const formattedPath = `${convertToUTC(round.initialize_datetime, undefined, 'YYYY/MM/DD')}/round-${round_id}`;
 
 	try {
-		const picturesMetadataRequest = await fetch(picture_logs_url + `/${formattedPath}/metadata.json`, { headers, next: { revalidate } });
+		const picturesMetadataRequest = await get(picture_logs_url + `/${formattedPath}/metadata.json`, revalidate);
 
 		if (picturesMetadataRequest.ok) {
 			const picturesMetadata: Record<string, Picture> = await picturesMetadataRequest.json();
@@ -163,7 +163,7 @@ export async function getRound(round_id: number): Promise<Omit<ExtendedRoundData
 		};
 
 		try {
-			const logFileResponse = await fetch(fileUrl, { method: 'HEAD', headers, next: { revalidate } });
+			const logFileResponse = await get(fileUrl, revalidate);
 
 			if (logFileResponse.ok) {
 				logFile.src = fileUrl;
@@ -183,7 +183,7 @@ export async function getRound(round_id: number): Promise<Omit<ExtendedRoundData
 }
 
 export async function getLogText(url: string): Promise<string | null> {
-	const logResponse = await fetch(url, { headers, next: { revalidate } });
+	const logResponse = await get(url, revalidate);
 
 	if (!logResponse.ok) {
 		if (logResponse.status === 404) {
@@ -197,7 +197,7 @@ export async function getLogText(url: string): Promise<string | null> {
 }
 
 export async function getLogJson<T>(url: string): Promise<T | null> {
-	const logResponse = await fetch(url, { headers, next: { revalidate } });
+	const logResponse = await get(url, revalidate);
 
 	if (!logResponse.ok) {
 		if (logResponse.status === 404) {

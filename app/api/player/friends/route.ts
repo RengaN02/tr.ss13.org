@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 
 import { authOptions } from '@/app/lib/auth';
-import headers from '@/app/lib/headers';
+import { get } from '@/app/lib/headers';
 
 const friendsEndpoint = process.env.API_URL + '/v2/player/friends';
 const invitesEndpoint = process.env.API_URL + '/v2/player/friend_invites';
@@ -17,8 +17,8 @@ export async function GET() {
 
 	try {
 		const [friendsResponse, invitesResponse] = await Promise.all([
-			fetch(`${friendsEndpoint}?ckey=${ckey}`, { headers }),
-			fetch(`${invitesEndpoint}?ckey=${ckey}`, { headers }),
+			get(`${friendsEndpoint}?ckey=${ckey}`),
+			get(`${invitesEndpoint}?ckey=${ckey}`),
 		]);
 
 		if (!friendsResponse.ok || !invitesResponse.ok) {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
 
-import headers from '@/app/lib/headers';
+import { get } from '@/app/lib/headers';
 
 const endpoint = process.env.API_URL + '/v2/player/favorite_character';
 
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 	const { ckey } = data;
 
 	try {
-		const response = await fetch(`${endpoint}?ckey=${ckey}`, { headers, next: { revalidate: 3_600 } });
+		const response = await get(`${endpoint}?ckey=${ckey}`, 3_600);
 
 		if (!response.ok) {
 			throw new Error('Failed to fetch');
