@@ -1,4 +1,4 @@
-import NextAuth, { type NextAuthOptions } from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
 import Discord from 'next-auth/providers/discord';
 
 import headers from '@/app/lib/headers';
@@ -66,5 +66,3 @@ export const authOptions: NextAuthOptions = {
 		},
 	},
 };
-
-export const { handlers, signIn, signOut, auth } = NextAuth(authOptions);
