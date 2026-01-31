@@ -15,7 +15,7 @@ export default {
 
 		if (!token) {
 			const url = request.nextUrl.clone();
-			url.pathname = '/login';
+			url.pathname = '/sign-in';
 			url.searchParams.set('callbackUrl', request.url);
 
 			return NextResponse.redirect(url);

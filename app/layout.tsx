@@ -10,9 +10,9 @@ import { Suspense } from 'react';
 
 import background from '@/app/images/background-progressive.jpeg';
 import Footer from '@/app/ui/footer';
-import LoginButton from '@/app/ui/login-button';
 import NavLinks from '@/app/ui/nav-links';
 import { Providers } from '@/app/ui/provider';
+import SignInButton from '@/app/ui/sign-in-button';
 
 const geistSans = localFont({
 	src: './fonts/GeistVF.woff',
@@ -34,7 +34,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
 				<Providers>
 					<div className="w-screen h-screen overflow-y-auto scrollbar-hidden">
 						<div className="fixed right-4 top-4 text-sm z-[100]">
-							<LoginButton />
+							<SignInButton />
 						</div>
 						<div className="w-screen h-screen flex flex-col overflow-x-hidden scrollbar-thumb-gray scrollbar-track-transparent">
 							<Suspense>

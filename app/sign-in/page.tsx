@@ -9,15 +9,15 @@ import { Suspense,useState } from 'react';
 
 import Button from '@/app/ui/button';
 
-export default function LoginPage() {
+export default function Page() {
   return (
     <Suspense fallback={<div className="text-center p-20 text-white">Yükleniyor...</div>}>
-      <LoginContent />
+      <SignIn />
     </Suspense>
   );
 }
 
-function LoginContent() {
+function SignIn() {
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -25,7 +25,7 @@ function LoginContent() {
 
   // Callback URL ve Döngü Koruması
   let callbackUrl = searchParams.get('callbackUrl') || '/me';
-  if (callbackUrl.includes('/login')) callbackUrl = '/me';
+  if (callbackUrl.includes('/sign-in')) callbackUrl = '/me';
 
   const error = searchParams.get('error');
 
@@ -36,7 +36,7 @@ function LoginContent() {
 
   const handleLogout = async () => {
     setIsLoading(true);
-    await signOut({ callbackUrl: '/login' });
+    await signOut({ callbackUrl: '/sign-in' });
   };
 
   if (status === 'loading') return <div className="p-20 text-center opacity-50">Yükleniyor...</div>;

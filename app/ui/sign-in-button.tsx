@@ -1,4 +1,5 @@
 'use client';
+
 import { signIn, signOut, useSession } from 'next-auth/react';
 
 import Button from '@/app/ui/button';
@@ -14,13 +15,16 @@ const menuItems = [
 	{ label: 'Çıkış Yap', func: async () => await signOut(), class: 'text-red-500 w-full'}
 ];
 
-export default function LoginButton() {
+export default function SignInButton() {
 	const { data: session, status } = useSession();
+
 	if (status === 'loading') {
     return;
   }
+
 	if(session && session.user) {
-		return (<DropdownMenu items={menuItems}><Button>{session.user.name}</Button></DropdownMenu>);
+		return <DropdownMenu items={menuItems}><Button>{session.user.name}</Button></DropdownMenu>;
 	}
-  return <button onClick={() => signIn('discord')}><Button>Giriş Yap</Button></button>;
+
+	return <button onClick={() => signIn('discord')}><Button>Giriş Yap</Button></button>;
 }
