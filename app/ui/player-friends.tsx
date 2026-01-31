@@ -194,8 +194,8 @@ function FriendCard({ friend, ckey, friendCkey, mutate }: { friend?: Friendship,
   const [friendship, setFriendship] = useState<Friendship | null | undefined>(friend);
   const [friend_ckey, setFriendCkey] = useState<string | undefined>(friendCkey);
 
-  const { data: favorite_character } = useSWRImmutable(friend_ckey ? `/api/player/favorite_character?ckey=${friend_ckey}` : null, fetcher);
-  const { data: checked_friendship } = useSWRImmutable<Friendship>(friend_ckey ? `/api/player/friends/check_friendship?friend_ckey=${friend_ckey}` : null, fetcher);
+  const { data: favorite_character } = useSWRImmutable(friend_ckey ? `/api/player/favorite-character?ckey=${friend_ckey}` : null, fetcher);
+  const { data: checked_friendship } = useSWRImmutable<Friendship>(friend_ckey ? `/api/player/friends/check-friendship?friend_ckey=${friend_ckey}` : null, fetcher);
 
   useEffect(() => {
     if (checked_friendship) {
